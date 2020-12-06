@@ -21,10 +21,13 @@ class ConnectionToMySQl():
 		return queryset
 
 	def getObject(self, table, condition=()):
-		statement = f"select * from {table} where {condition[0]} = {condition[1]}"
+		conditionStatement = '' if len(condition) == 0 else f' where {condition[0]} = {condition[1]}'
+
+		statement = f"select * from {table}" + conditionStatement
 		self.cursor.execute(statement)
 
-		obj = dict(zip(self.cursor.column_names, self.cursor.fetchone()))
+		# obj = dict(zip(self.cursor.column_names, self.cursor.fetchone()))
+		obj = self.cursor.fetchone()
 		return obj
 
 	def getColumnFromStatement(self, statement):

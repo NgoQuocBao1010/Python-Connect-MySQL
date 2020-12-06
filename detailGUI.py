@@ -43,7 +43,7 @@ def generateData(columns, data):
 
 	return data
 
-data = generateData('stt_ctr', 1)
+data = generateData('stt_ctr', 4)
 root = tk.Tk()
 
 canvas = tk.Canvas(root, height = HEIGHT, width = WIDTH)
