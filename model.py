@@ -1,7 +1,9 @@
 from mysqlConnection import ConnectionToMySQl
+from datetime import datetime
 
 class Congtrinh:
 	tableName = 'cgtrinh'
+	pk = 'stt_ctr'
 	colData = {
 		1 : {
 			'width': 80,
@@ -48,10 +50,13 @@ class Congtrinh:
 	def detailsField(cls):
 		return {
 			'arribute': ['Tên Công Trình', 'Địa Chỉ', 
-					'Tỉnh Thành', 'Kinh Phí', 
-					'Tên Chủ', 'Tên Thầu', 'Ngày Bắt Đầu'
+					'Tỉnh Thành', 'Kinh Phí (triệu đồng)', 
+					'Ngày Bắt Đầu'
 					],
-			'forgeinKey': ['Kiến Trúc Sư', 'Công Nhân']
+			'forgeinKey': {
+				'Tên Chủ': Chunhan, 
+				'Tên Thầu': Chuthau,
+			}
 		}
 
 	def __init__(self, stt, tenctr, diachi, tinhthanh, kinhphi, tenchu, tenthau, ngaybatdau):
@@ -63,8 +68,7 @@ class Congtrinh:
 		self.tenchu = tenchu
 		self.tenthau = tenthau
 		self.ngaybatdau = ngaybatdau
-		self.getArchitects()
-		self.getEngineers()
+
 
 	def getArchitects(self):
 		self.architects = []
@@ -86,6 +90,28 @@ class Congtrinh:
 			eng = Congnhan(*rset)
 			self.engineers.append(eng)
 
+	def saveToDatabase(self, values):
+		if self.stt is not None:
+			raise Exception("New Data's ID Should Be None, Your Data may exist in Database")
+
+		conn = ConnectionToMySQl()
+		idCtr = max(conn.getQueryset('select stt_ctr from cgtrinh'))[0] + 1
+		
+		self.stt = idCtr
+
+		try:
+			self.kinhphi = int(self.kinhphi)
+			self.ngaybatdau = datetime.strptime(self.ngaybatdau, '%Y-%m-%d').date()
+
+		except Exception as e:
+			raise Exception('Wrong Format or Data Type in Field kinhphi or ngaybatdau')
+
+		
+		insertStatement = f"insert into cgtrinh values ({self.stt}, '{self.tenctr}', '{self.diachi}', '{self.tinhthanh}', {self.kinhphi}, '{self.tenchu}', '{self.tenthau}', '{self.ngaybatdau}')"
+		print(insertStatement)
+		conn.cursor.execute(insertStatement)
+		conn.connection.commit()
+
 
 	def __str__(self):
 		return self.tenctr
@@ -94,6 +120,7 @@ class Congtrinh:
 
 class Chuthau:
 	tableName = 'chuthau'
+	pk = 'ten_thau'
 	colData = {}
 	def __init__(self, tenthau, tel, diachi):
 		self.tenthau = tenthau
@@ -103,7 +130,9 @@ class Chuthau:
 
 class Chunhan:
 	tableName = 'chunhan'
+	pk = 'ten_chu'
 	colData = {}
+	
 	def __init__(self, tenchu, diachi):
 		self.tenchu = tenchu
 		self.diachi = diachi
@@ -111,7 +140,9 @@ class Chunhan:
 
 class Congnhan:
 	tableName = 'congnhan'
+	pk = 'hoten_cn'
 	colData = {}
+
 	def __init__(self, hotencn, namsinhcn, namvaonghe, chuyenmon):
 		self.hotencn = hotencn
 		self.namsinhcn = namsinhcn
@@ -137,8 +168,19 @@ class Ktrucsu:
 
 
 
-# x = Congtrinh.createAnObj()
-# print(x.engineers[0])
+x = Congtrinh.createAnObj()
+# print(x)
+# print(type(x.ngaybatdau))
+
+# y = 'xin chao'
+# yTime = datetime.strptime(y, '%d-%m-%Y').date()
+# print(yTime)
 
 # x = ConnectionToMySQl()
-# print(x.getColumnFromStatement('select * from cgtrinh'))
+# print(x.getObject('cgtrinh', ('stt_ctr', 3)))
+
+data = (None, 'vincom', 'bai cat', 'vinh long', 5000, 'so thuong mai du lich', 'phong dich vu so xd', '2000-10-06')
+# x = Congtrinh(*data).saveToDatabase(data)
+
+
+

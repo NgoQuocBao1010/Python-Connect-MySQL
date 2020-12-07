@@ -34,6 +34,8 @@ class ConnectionToMySQl():
 		self.cursor.execute(statement)
 		return self.cursor.column_names
 
+	
+
 
 	# def callProcedure(self, procName, arg):
 	# 	# result_args = self.cursor.callproc(procName, args)
