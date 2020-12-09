@@ -1,22 +1,72 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 
 from mysqlConnection import ConnectionToMySQl
 from tableGUI import TableGUI
+# from mainAppGui import application
 import model
 
 TITLE_FONT = ("Comic Sans MS", 25, "bold")
 LABEL_FONT = ("Times New Roman", 14)
 
 
-def addElement(window, tableModel):
-	def submit():
-		for field in fieldNames:
+class funcButton():
+	def __init__(self, root, text, fModel, tModel, coordinate=(0, 0, 0, 0), bg='black', fg='white', font=LABEL_FONT):
+		self.root = root
+		self.text = text
+		self.fModel = fModel
+		self.tModel = tModel
+		self.coordinate = coordinate
+		self.bg = bg
+		self.fg = fg
+		self.font = font
+		self.create()
+
+
+	def create(self):
+		summit = tk.Button(	self.root, 
+							text 	=	self.text, 
+							bg   	=	self.bg, 
+							fg   	=	self.fg, 
+							font 	=	self.font,
+							command	=	lambda: self.addNew(self.tModel))
+		x, y, width, height = self.coordinate
+		summit.place(relx=x, rely=y, relwidth=width, relheight=height)
+
+	def addNew(self, tModel):
+		self.root.destroy()
+		addElementGui(self.tModel)
+		addElementGui(self.fModel)
+
+
+def addElement(window, tableModel, values={}):
+	def getValues():
+		values = {}
+		for field in fieldInputs.keys():
 			entry = fieldInputs.get(field).get()
-			print(field, entry)
+			values.setdefault(field, entry)
+
+		return values
+
+	def submit():
+		values = getValues()
+
+		for data in values.values():
+			if len(data) == 0:
+				messagebox.showerror('Error!!!', 'Invalid format on fields: ' + field)
+				return
+
+		try:
+			tableModel.saveToDatabase(values)
+			messagebox.showinfo('Succesful!!', 'Your Data has been saved!!')
+			window.destroy()
+
+		except Exception as e:
+			messagebox.showerror('Error!!!', str(e))
 
 
-	fieldNames = tableModel.detailsField().get('arribute')
+	fieldNames = tableModel.formsField().get('arribute')
 	fieldInputs = {}
 
 	titleLb = tk.Label(window, fg='black', text='Thêm ' + tableModel.tableName, font=TITLE_FONT)
@@ -27,45 +77,52 @@ def addElement(window, tableModel):
 		fieldLb = tk.Label(window, fg='black', text=field, font=LABEL_FONT, bg='gray')
 		fieldLb.place(relx=0.02, rely=lbRely, relwidth=0.13, relheight=0.07)
 
-		fieldEnt = tk.Entry(window, fg='black', text=field, font=LABEL_FONT)
+		fieldVar = tk.StringVar()
+		fieldVar.set('')
+		fieldEnt = tk.Entry(window, fg='black', textvariable=fieldVar, font=LABEL_FONT)
 		fieldEnt.place(relx=0.16, rely=lbRely, relwidth=0.25, relheight=0.07)
 
 		lbRely += 0.12
-		fieldInputs.setdefault(field, fieldEnt)
+		fieldInputs.setdefault(field, fieldVar)
 
-	fkFields = tableModel.detailsField().get("forgeinKey").keys()
-
+	fkFields = tableModel.formsField().get("forgeinKey").keys()
 	lbRely = 0.2
 	for field in fkFields:
 		fieldLb = tk.Label(window, fg='black', text=field, font=LABEL_FONT, bg='gray')
 		fieldLb.place(relx=0.6, rely=lbRely, relwidth=0.13, relheight=0.07)
 
-		tModel = tableModel.detailsField().get("forgeinKey").get(field)
+		tModel = tableModel.formsField().get("forgeinKey").get(field)
 		conn = ConnectionToMySQl()
 		statement = f'select {tModel.pk} from {tModel.tableName}'
 		rs = conn.getQueryset(statement)
-		print(rs)
-		# fieldVar = tk.StringVar()
-		# dropdown = tk.OptionMenu(window)
+		
+		options = []
+		for name in rs:
+			options.append(*name)
+
+		fieldVar = tk.StringVar()
+		fieldVar.set(options[0])
+		dropdown = tk.OptionMenu(window, fieldVar, *options)
+		dropdown.place(relx=0.6, rely=lbRely + 0.1, relwidth=0.2, relheight=0.07)
+		fieldInputs.setdefault(field, fieldVar)
+		btn = funcButton(window, 'Them ' + field, tableModel, tModel, (0.82, lbRely + 0.1, 0.15, 0.07))
 
 		lbRely += 0.3
 
 	
 
-	submitBtn = tk.Button(window, fg='black', text='Submit', font=LABEL_FONT, bg='gray', command=submit)
+	submitBtn = tk.Button(window, fg='white', text='Save', font=LABEL_FONT, bg='green', command=submit)
 	submitBtn.place(relx=0.85, rely=0.8, relwidth=0.1, relheight=0.07)
 
 
+def addElementGui(tModel, values={}):
+	root = tk.Tk()
+	root.title('My Application')
+	root.geometry('1400x600')
+
+	addElement(root, tModel, values)
+
+	root.mainloop()
 
 
-
-
-
-
-root = tk.Tk()
-root.title('My Application')
-root.geometry('1400x600')
-
-addElement(root, model.Congtrinh)
-
-root.mainloop()
+addElementGui(model.Congtrinh)

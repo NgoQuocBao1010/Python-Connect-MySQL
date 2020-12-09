@@ -58,7 +58,13 @@ class ConnectionToMySQl():
 # 			host='localhost',
 # 		)
 
+
 # cursor = conn.cursor()
+
+# args = (9 ,'nha rieng moi','76 chau van liem' ,'ha noi', 100, 'phan thanh liem', 'tran khai hoan', '1994-09-06')
+# cursor.callproc('insertIntoCgtrinh', args)
+# conn.commit()
+
 
 # cursor.execute("call getKTSbyCtrinh(6);", multi=True)
 

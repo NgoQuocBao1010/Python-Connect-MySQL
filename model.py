@@ -47,7 +47,7 @@ class Congtrinh:
 		return obj
 
 	@classmethod
-	def detailsField(cls):
+	def formsField(cls):
 		return {
 			'arribute': ['Tên Công Trình', 'Địa Chỉ', 
 					'Tỉnh Thành', 'Kinh Phí (triệu đồng)', 
@@ -58,6 +58,33 @@ class Congtrinh:
 				'Tên Thầu': Chuthau,
 			}
 		}
+
+	@classmethod
+	def saveToDatabase(cls, values):
+		conn = ConnectionToMySQl()
+		idCtr = max(conn.getQueryset('select stt_ctr from cgtrinh'))[0] + 1
+		tenctr 		= values.get('Tên Công Trình')
+		dchi   		= values.get('Địa Chỉ')
+		tthanh   	= values.get('Tỉnh Thành')
+		kphi   		= values.get('Kinh Phí (triệu đồng)')
+		ngaybd   	= values.get('Ngày Bắt Đầu')
+		tenChu 		= values.get('Tên Chủ')
+		tenThau 	= values.get('Tên Thầu')
+
+		try:
+			kphi = int(kphi)
+			ngaybd = datetime.strptime(ngaybd, '%Y-%m-%d').date()
+
+		except Exception as e:
+			raise Exception('Wrong Format or Data Type in Field kinhphi or ngaybatdau')
+
+		
+		args = (idCtr, tenctr, dchi, tthanh, kphi, tenChu, tenThau, ngaybd)
+		conn.cursor.callproc('insertIntoCgtrinh', args)
+		conn.connection.commit()
+
+		return True
+
 
 	def __init__(self, stt, tenctr, diachi, tinhthanh, kinhphi, tenchu, tenthau, ngaybatdau):
 		self.stt = stt
@@ -90,28 +117,6 @@ class Congtrinh:
 			eng = Congnhan(*rset)
 			self.engineers.append(eng)
 
-	def saveToDatabase(self, values):
-		if self.stt is not None:
-			raise Exception("New Data's ID Should Be None, Your Data may exist in Database")
-
-		conn = ConnectionToMySQl()
-		idCtr = max(conn.getQueryset('select stt_ctr from cgtrinh'))[0] + 1
-		
-		self.stt = idCtr
-
-		try:
-			self.kinhphi = int(self.kinhphi)
-			self.ngaybatdau = datetime.strptime(self.ngaybatdau, '%Y-%m-%d').date()
-
-		except Exception as e:
-			raise Exception('Wrong Format or Data Type in Field kinhphi or ngaybatdau')
-
-		
-		insertStatement = f"insert into cgtrinh values ({self.stt}, '{self.tenctr}', '{self.diachi}', '{self.tinhthanh}', {self.kinhphi}, '{self.tenchu}', '{self.tenthau}', '{self.ngaybatdau}')"
-		print(insertStatement)
-		conn.cursor.execute(insertStatement)
-		conn.connection.commit()
-
 
 	def __str__(self):
 		return self.tenctr
@@ -122,6 +127,33 @@ class Chuthau:
 	tableName = 'chuthau'
 	pk = 'ten_thau'
 	colData = {}
+
+	@classmethod
+	def formsField(cls):
+		return {
+			'arribute': ['Tên Thầu', 'Địa Chỉ', 'Số điện thoại'],
+			'forgeinKey': {
+			}
+	}
+
+	@classmethod
+	def saveToDatabase(cls, values):
+		conn = ConnectionToMySQl()
+
+		tenThau 	= values.get('Tên Thầu')
+		dchi   		= values.get('Địa Chỉ')
+		sdt 		= values.get('Số điện thoại')
+		
+		if not sdt.isdigit():
+			raise Exception('Wrong Format or Data Type in Field Số điện thoại')
+
+		
+		args = (tenThau, sdt, dchi)
+		conn.cursor.callproc('insertIntoChuthau', args)
+		conn.connection.commit()
+
+		return True
+
 	def __init__(self, tenthau, tel, diachi):
 		self.tenthau = tenthau
 		self.tel = tel
@@ -132,6 +164,28 @@ class Chunhan:
 	tableName = 'chunhan'
 	pk = 'ten_chu'
 	colData = {}
+
+	@classmethod
+	def formsField(cls):
+		return {
+			'arribute': ['Tên Chủ', 'Địa Chỉ'],
+			'forgeinKey': {
+			}
+	}
+
+	@classmethod
+	def saveToDatabase(cls, values):
+		conn = ConnectionToMySQl()
+
+		tenThau 	= values.get('Tên Chủ')
+		dchi   		= values.get('Địa Chỉ')
+
+		
+		args = (tenThau, dchi)
+		conn.cursor.callproc('insertIntoChunhan', args)
+		conn.connection.commit()
+
+		return True
 	
 	def __init__(self, tenchu, diachi):
 		self.tenchu = tenchu
@@ -142,6 +196,36 @@ class Congnhan:
 	tableName = 'congnhan'
 	pk = 'hoten_cn'
 	colData = {}
+
+	@classmethod
+	def formsField(cls):
+		return {
+			'arribute': ['Họ và tên', 'Năm sinh', 'Năm vào nghề', 'Chuyên môn'],
+			'forgeinKey': {
+			}
+	}
+
+	@classmethod
+	def saveToDatabase(cls, values):
+		conn = ConnectionToMySQl()
+
+		tenCn 		= values.get('Họ và tên')
+		namsinhcn   = values.get('Năm sinh')
+		namvaonghe  = values.get('Năm vào nghề')
+		chuyenmon   = values.get('Chuyên môn')
+
+		if not namsinhcn.isdigit() or not namvaonghe.isdigit():
+			raise Exception('Wrong Format or Data Type in Field Năm sinh hoặc Năm vào nghề')
+
+		if namsinhcn > namvaonghe:
+			raise Exception('Năm sinh không lớn hơn Năm vào nghề')
+
+		
+		args = (tenCn, namsinhcn, namvaonghe, chuyenmon)
+		conn.cursor.callproc('insertIntoCongnhan', args)
+		conn.connection.commit()
+
+		return True
 
 	def __init__(self, hotencn, namsinhcn, namvaonghe, chuyenmon):
 		self.hotencn = hotencn
@@ -155,7 +239,34 @@ class Congnhan:
 
 class Ktrucsu:
 	tableName = 'ktrucsu'
+	pk='hoten_kts'
 	colData = {}
+
+	@classmethod
+	def formsField(cls):
+		return {
+			'arribute': ['Họ và tên', 'Năm sinh', 'Phái', 'Nơi tốt nghiệp', 'Địa chỉ'],
+			'forgeinKey': {
+			}
+	}
+
+	@classmethod
+	def saveToDatabase(cls, values):
+		conn = ConnectionToMySQl()
+
+		tenkts 		= values.get('Họ và tên')
+		namsinhkts  = values.get('Năm sinh')
+		phai		= values.get('Phái')
+		noitn   	= values.get('Nơi tốt nghiệp')
+		dchi 		= values.get('Địa chỉ')
+
+		if not namsinhkts.isdigit():
+			raise Exception('Wrong Format or Data Type in Field Năm sinh')
+		
+		args = (tenkts, namsinhkts, phai, noitn, dchi)
+		conn.cursor.callproc('insertIntoKtrucsu', args)
+		conn.connection.commit()
+
 	def __init__(self, hotenkts, namsinhkts, phai, noitn, diachi_ll_kts):
 		self.hotenkts = hotenkts
 		self.namsinhkts = namsinhkts
@@ -168,7 +279,7 @@ class Ktrucsu:
 
 
 
-x = Congtrinh.createAnObj()
+# x = Congtrinh.createAnObj()
 # print(x)
 # print(type(x.ngaybatdau))
 
@@ -179,7 +290,7 @@ x = Congtrinh.createAnObj()
 # x = ConnectionToMySQl()
 # print(x.getObject('cgtrinh', ('stt_ctr', 3)))
 
-data = (None, 'vincom', 'bai cat', 'vinh long', 5000, 'so thuong mai du lich', 'phong dich vu so xd', '2000-10-06')
+# data = (None, 'vincom', 'bai cat', 'vinh long', 5000, 'so thuong mai du lich', 'phong dich vu so xd', '2000-10-06')
 # x = Congtrinh(*data).saveToDatabase(data)
 
 
