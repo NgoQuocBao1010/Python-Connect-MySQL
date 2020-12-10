@@ -12,15 +12,15 @@ LABEL_FONT = ("Times New Roman", 14)
 
 
 class funcButton():
-	def __init__(self, root, text, fModel, tModel, coordinate=(0, 0, 0, 0), bg='black', fg='white', font=LABEL_FONT):
+	def __init__(self, root, text, fModel, tModel, coordinate=(0, 0, 0, 0)):
 		self.root = root
 		self.text = text
 		self.fModel = fModel
 		self.tModel = tModel
 		self.coordinate = coordinate
-		self.bg = bg
-		self.fg = fg
-		self.font = font
+		self.bg = 'black'
+		self.fg = 'white'
+		self.font = LABEL_FONT
 		self.create()
 
 
@@ -40,13 +40,13 @@ class funcButton():
 		addElementGui(self.fModel)
 
 
-def addElement(window, tableModel, values={}):
+def addElement(window, tableModel, pValues={}):
 	def getValues():
 		values = {}
 		for field in fieldInputs.keys():
 			entry = fieldInputs.get(field).get()
 			values.setdefault(field, entry)
-
+		print(values)
 		return values
 
 	def submit():
@@ -64,6 +64,12 @@ def addElement(window, tableModel, values={}):
 
 		except Exception as e:
 			messagebox.showerror('Error!!!', str(e))
+
+	def preFill():
+		print(pValues)
+		for field in fieldInputs.keys():
+			data = pValues.get(field)
+			var = fieldInputs.get(field).set(data)
 
 
 	fieldNames = tableModel.formsField().get('arribute')
@@ -114,6 +120,10 @@ def addElement(window, tableModel, values={}):
 	submitBtn = tk.Button(window, fg='white', text='Save', font=LABEL_FONT, bg='green', command=submit)
 	submitBtn.place(relx=0.85, rely=0.8, relwidth=0.1, relheight=0.07)
 
+	if len(pValues) != 0:
+		print('hello')
+		preFill()
+
 
 def addElementGui(tModel, values={}):
 	root = tk.Tk()
@@ -124,5 +134,5 @@ def addElementGui(tModel, values={}):
 
 	root.mainloop()
 
-
-addElementGui(model.Congtrinh)
+values = {'Tên Công Trình': 'hello', 'Địa Chỉ': '123 d', 'Tỉnh Thành': 'ct', 'Kinh Phí (triệu đồng)': '100', 'Ngày Bắt Đầu': '1990-06-06', 'Tên Chủ': 'phan thanh liem', 'Tên Thầu': 'cty xd so 6'}
+addElementGui(model.Congtrinh, values)
