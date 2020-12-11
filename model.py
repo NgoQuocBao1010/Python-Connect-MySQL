@@ -2,7 +2,8 @@ from mysqlConnection import ConnectionToMySQl
 from datetime import datetime
 
 class Congtrinh:
-	tableName = 'cgtrinh'
+	table = 'cgtrinh'
+	tableName = 'Công Trình'
 	pk = 'stt_ctr'
 	colData = {
 		1 : {
@@ -39,11 +40,22 @@ class Congtrinh:
 		},
 	}
 
+	sqlSyntax =  {
+			'stt_ctr': 'STT',
+			'ten_ctr': 'Tên Công Trình',
+			'diachi_ctr': 'Địa Chỉ',
+			'tinh_thanh': 'Tỉnh Thành',
+			'kinh_phi': 'Kinh Phí',
+			'ten_chu': 'Tên Chủ',
+			'ten_thau': 'Tên Thầu',
+			'ngay_bd': 'Ngày Bắt Đầu',
+	}
+
 	@classmethod
-	def createAnObj(cls):
+	def createAnObj(cls, condition=()):
 		x = ConnectionToMySQl()
-		rs = x.getObject(cls.tableName)
-		obj = Congtrinh(*rs)
+		rs = x.getObject(cls.table, condition)
+		obj = dict(zip(list(cls.sqlSyntax.values()), rs))
 		return obj
 
 	@classmethod
@@ -122,10 +134,15 @@ class Congtrinh:
 		return self.tenctr
 
 
-
 class Chuthau:
-	tableName = 'chuthau'
+	table = 'chuthau'
+	tableName = 'Nhà Thầu'
 	pk = 'ten_thau'
+	sqlSyntax =  {
+			'tel': 'SDT',
+			'ten_thau': 'Tên Thầu',
+			'dchi_thau': 'Địa Chỉ',
+	}
 	colData = {}
 
 	@classmethod
@@ -161,9 +178,14 @@ class Chuthau:
 
 
 class Chunhan:
-	tableName = 'chunhan'
+	table = 'chunhan'
+	tableName = 'Chủ Nhà'
 	pk = 'ten_chu'
 	colData = {}
+	sqlSyntax =  {
+			'ten_chu': 'Tên Chủ',
+			'dchi_chu': 'Địa Chỉ',
+	}
 
 	@classmethod
 	def formsField(cls):
@@ -193,9 +215,16 @@ class Chunhan:
 
 
 class Congnhan:
-	tableName = 'congnhan'
+	table = 'congnhan'
+	tableName = 'Công Nhân'
 	pk = 'hoten_cn'
 	colData = {}
+	sqlSyntax =  {
+			'hoten_cn': 'Tên Công Nhân',
+			'nams_cn': 'Địa Chỉ',
+			'nam_vao_n': 'Năm Vào Nghề',
+			'ch_mon': 'Chuyên Môn'
+	}
 
 	@classmethod
 	def formsField(cls):
@@ -238,9 +267,17 @@ class Congnhan:
 
 
 class Ktrucsu:
+	table =  'ktrucsu'
 	tableName = 'ktrucsu'
 	pk='hoten_kts'
 	colData = {}
+	sqlSyntax =  {
+			'hoten_kts': 'Tên Chủ',
+			'nams_kts': 'Địa Chỉ',
+			'phai': 'Phái',
+			'noi_tn': 'Nơi Tốt Nghiệp',
+			'dchi_ll_kts': 'Địa Chỉ'
+	}
 
 	@classmethod
 	def formsField(cls):
@@ -278,20 +315,5 @@ class Ktrucsu:
 		return self.hotenkts
 
 
-
-# x = Congtrinh.createAnObj()
-# print(x)
-# print(type(x.ngaybatdau))
-
-# y = 'xin chao'
-# yTime = datetime.strptime(y, '%d-%m-%Y').date()
-# print(yTime)
-
-# x = ConnectionToMySQl()
-# print(x.getObject('cgtrinh', ('stt_ctr', 3)))
-
-# data = (None, 'vincom', 'bai cat', 'vinh long', 5000, 'so thuong mai du lich', 'phong dich vu so xd', '2000-10-06')
-# x = Congtrinh(*data).saveToDatabase(data)
-
-
-
+# Congtrinh.createAnObj()
+# print(Congtrinh.createAnObj())

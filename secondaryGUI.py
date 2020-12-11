@@ -99,7 +99,8 @@ def addElement(window, tableModel, pValues={}):
 
 		tModel = tableModel.formsField().get("forgeinKey").get(field)
 		conn = ConnectionToMySQl()
-		statement = f'select {tModel.pk} from {tModel.tableName}'
+		table = tModel.sqlSyntax.get('table')
+		statement = f'select {tModel.pk} from {table}'
 		rs = conn.getQueryset(statement)
 		
 		options = []

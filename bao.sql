@@ -237,8 +237,14 @@ DELIMITER ;
 call insertIntoKtrucsu('NCHM', 2000, 1, 'new york', 'cau hung loi');
 
 
-
-
+DELIMITER //
+create procedure tongCNmoiCtrinh()
+	Begin
+		select stt_ctr, count(*) so_cn
+        from thamgia group by stt_ctr;
+	End //
+DELIMITER ;
+call tongCNmoiCtrinh();
 
 
 

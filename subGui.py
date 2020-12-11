@@ -12,12 +12,13 @@ LABEL_FONT = ("Times New Roman", 14)
 
 class Form():
 	class funcButton():
-		def __init__(self, canvas, text, root, fModel, tModel, coordinate=(0, 0, 0, 0)):
+		def __init__(self, canvas, text, root, fModel, tModel, form=None, coordinate=(0, 0, 0, 0)):
 			self.canvas = canvas
 			self.text = text
 			self.root = root
 			self.fModel = fModel
 			self.tModel = tModel
+			self.form = form
 			self.coordinate = coordinate
 			self.bg = 'black'
 			self.fg = 'white'
@@ -36,25 +37,27 @@ class Form():
 			summit.place(relx=x, rely=y, relwidth=width, relheight=height)
 
 		def addNew(self):
+			values = self.form.getValues()
 			self.root.destroy()
 			Form.createForm(self.tModel)
-			Form.createForm(self.fModel)
+			Form.createForm(self.fModel, values)
 
 	@classmethod
-	def createForm(cls, tableModel):
+	def createForm(cls, tableModel, values={}):
 		root = tk.Tk()
 		root.title('My Application')
 		root.geometry('1400x600')
 
-		form = Form(root, tableModel)
+		form = Form(root, tableModel, values)
 		form.createGUI()
 
 
 		root.mainloop()	
 
-	def __init__(self, window, tableModel):
+	def __init__(self, window, tableModel, values={}):
 		self.window = window
 		self.tableModel = tableModel
+		self.values = values
 
 		self.contentFrame = tk.Frame(self.window)
 
@@ -92,7 +95,7 @@ class Form():
 
 			tModel = self.tableModel.formsField().get("forgeinKey").get(field)
 			conn = ConnectionToMySQl()
-			statement = f'select {tModel.pk} from {tModel.tableName}'
+			statement = f'select {tModel.pk} from {tModel.table}'
 			rs = conn.getQueryset(statement)
 			
 			options = []
@@ -109,8 +112,9 @@ class Form():
 				'Them ' + field,
 				self.window, 
 				self.tableModel, 
-				tModel, 
-				(0.82, lbRely + 0.1, 0.15, 0.07)
+				tModel,
+				self, 
+				coordinate=(0.82, lbRely + 0.1, 0.15, 0.07)
 			)
 
 			lbRely += 0.3
@@ -124,6 +128,8 @@ class Form():
 						command=self.submit
 						)
 		submitBtn.place(relx=0.85, rely=0.8, relwidth=0.1, relheight=0.07)
+
+		self.preFill()
 
 	def getValues(self):
 		values = {}
@@ -149,5 +155,12 @@ class Form():
 		except Exception as e:
 			messagebox.showerror('Error!!!', str(e))
 
+	def preFill(self):
+		if len(self.values) != 0:
+			for field in self.fieldInputs.keys():
+				data = self.values.get(field)
+				var = self.fieldInputs.get(field).set(data)
 
+
+val = {'Tên Công Trình': 'cxcxzczxc', 'Địa Chỉ': 'dasda', 'Tỉnh Thành': 'dasdas', 'Kinh Phí (triệu đồng)': 'asdasd', 'Ngày Bắt Đầu': 'asdasd', 'Tên Chủ': 'dai hoc can tho', 'Tên Thầu': 'cty xd so 6'}
 Form.createForm(model.Congtrinh)

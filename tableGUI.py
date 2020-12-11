@@ -20,7 +20,7 @@ class TableGUI():
 		self.model = model
 		self.window = window
 
-		self.defaultStatement = f'select * from {self.model.tableName}'
+		self.defaultStatement = f'select * from {self.model.table}'
 
 		# Label frames to hold component
 		self.tableFrame = tk.LabelFrame(self.window, text=self.model.tableName)
@@ -35,16 +35,16 @@ class TableGUI():
 		self.searchBtn = tk.Button(self.tableFrame, bg='green', fg='white', text='Search', command=self.search)
 		self.searchInput = tk.Entry(self.tableFrame)
 		self.searchTopic = tk.StringVar()
-		self.searchTopic.set(self.columns[1])
-		self.filterDropDown = tk.OptionMenu(self.tableFrame, self.searchTopic, *self.columns)
+		self.searchTopic.set(self.columnSyntaxs[1])
+		self.filterDropDown = tk.OptionMenu(self.tableFrame, self.searchTopic, *self.columnSyntaxs)
 
 		# order by topic
 		self.orderLb = tk.Label(self.tableFrame, bg='black', fg='white', text='Order By')
 		# self.orderLb.place(relx=0.78, rely=0.05, relwidth=0.075, relheight=0.05)
 
 		self.orderByTopic = tk.StringVar()
-		self.orderByTopic.set(self.columns[1])
-		self.orderDropdown = tk.OptionMenu(self.tableFrame, self.orderByTopic, *self.columns)
+		self.orderByTopic.set(self.columnSyntaxs[1])
+		self.orderDropdown = tk.OptionMenu(self.tableFrame, self.orderByTopic, *self.columnSyntaxs)
 		# self.orderDropdown.place(relx=0.85, rely=0.05, relwidth=0.12, relheight=0.05)
 
 
@@ -53,7 +53,11 @@ class TableGUI():
 
 		mysqlConn = ConnectionToMySQl()
 		self.rows = mysqlConn.getQueryset(statement)
-		self.columns = mysqlConn.cursor.column_names
+		self.columnSyntaxs = mysqlConn.cursor.column_names
+
+		self.columns = []
+		for syn in self.columnSyntaxs:
+			self.columns.append(self.model.sqlSyntax.get(syn.lower()))
 
 		for data in self.rows:
 			self.trv.insert('', 'end', values=data)
