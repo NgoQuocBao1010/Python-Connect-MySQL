@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 
 from mysqlConnection import ConnectionToMySQl
 from table import TableTkinter
@@ -51,6 +52,8 @@ class TableGUI():
 		# self.orderDropdown.place(relx=0.85, rely=0.05, relwidth=0.12, relheight=0.05)
 
 		self.addBtn = tk.Button(self.searchFrame, fg='red', text='Add', command=self.addData)
+		self.editBtn = tk.Button(self.searchFrame, fg='red', text='Edit', command=self.editData)
+		self.delBtn = tk.Button(self.searchFrame, fg='red', text='Delete', command=self.addData)
 
 
 	def updateData(self, statement):
@@ -74,7 +77,6 @@ class TableGUI():
 
 		self.trv.pack(side='top', padx=2)
 
-
 		self.vsb.place(relx=0.97, rely=0, relwidth=0.02, relheight=0.7)
 		self.trv.configure(yscrollcommand=self.vsb.set)
 
@@ -86,10 +88,14 @@ class TableGUI():
 		self.orderDropdown.place(relx=0.55, rely=0.05, relwidth=0.1, relheight=0.15)
 
 		self.addBtn.place(relx=0.05, rely=0.55, relwidth=0.1, relheight=0.15)
+		self.editBtn.place(relx=0.17, rely=0.55, relwidth=0.1, relheight=0.15)
+		self.delBtn.place(relx=0.29, rely=0.55, relwidth=0.1, relheight=0.15)
 
 		self.trv['columns'] = tuple(range(1, len(self.columns) + 1))
 		for column in range(1, len(self.columns) + 1):
 			self.trv.heading(column, text=self.columns[column - 1])
+
+		self.bindings()
 
 
 	def configColumns(self, colData={}):
@@ -118,6 +124,27 @@ class TableGUI():
 	def addData(self):
 		form = Form(self.window, self.model, self.app)
 		form.createGUI()
+
+	def editData(self):
+		selected = self.trv.focus()
+		if len(selected) == 0:
+			messagebox.showwarning('Warning', 'Please choose a item you want to edit!')
+			return
+
+		selectedVal = self.trv.item(selected)['values']
+		obj = dict(zip(self.model.sqlSyntax.values(), selectedVal))
+		form = Form(self.window, self.model, app=self.app, edit=True, values=obj)
+		form.createGUI()
+
+
+	def bindings(self):
+		self.trv.bind("<Double-1>", self.getFocusRow)
+
+	def getFocusRow(self, event):
+		selected = self.trv.focus()
+		selectedVal = self.trv.item(selected)['values']
+		obj = dict(zip(self.model.sqlSyntax.values(), selectedVal))
+		print(obj)
 
 
 

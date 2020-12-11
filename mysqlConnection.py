@@ -49,20 +49,20 @@ class ConnectionToMySQl():
 # print(c.cursor.execute("select * from cgtrinh"))
 # print(c.cursor.column_names)
 
-# conn = mysql.connector.connect(
-# 			auth_plugin='mysql_native_password',
-# 			database='project',
-# 			user='root', 
-# 			password='1',
-# 			host='localhost',
-# 		)
+conn = mysql.connector.connect(
+			auth_plugin='mysql_native_password',
+			database='project',
+			user='root', 
+			password='1',
+			host='localhost',
+		)
 
 
-# cursor = conn.cursor()
+cursor = conn.cursor()
 
-# args = (9 ,'nha rieng moi','76 chau van liem' ,'ha noi', 100, 'phan thanh liem', 'tran khai hoan', '1994-09-06')
-# cursor.callproc('insertIntoCgtrinh', args)
-# conn.commit()
+args = (20, '123123', '76 chau van liem', 'ha noi', 100, 'phan thanh liem', 'tran khai hoan', '1990-06-06')
+cursor.callproc('updateCgtrinh', args)
+conn.commit()
 
 
 # cursor.execute("call getKTSbyCtrinh(6);", multi=True)

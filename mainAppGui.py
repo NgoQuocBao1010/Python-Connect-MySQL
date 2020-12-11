@@ -49,6 +49,12 @@ class Application():
 						command= lambda: self.changeTableView(TABLES.get(btn4['text'])))
 		btn4.place(relx=0.1, rely=0.80, relwidth=0.8, relheight=0.1)
 
+		self.exitBtn = tk.Button(
+					self.navFrame, text='Thoat', bg='black', fg='white', 
+					command= lambda : self.root.destroy()
+					)
+		self.exitBtn.place(relx=0.01, rely=0.9, relwidth=0.8, relheight=0.075)
+
 		self.contentFrame = tk.Frame(self.root)
 		self.contentFrame.place(relx=0.1, rely=0, relwidth=0.9, relheight=1)
 
@@ -66,7 +72,7 @@ class Application():
 
 		newTable = TableGUI(self.contentFrame, newTableModel, self)
 		newTable.createGUI()
-		newTable.configColumns(newTableModel.colData)	
+		newTable.configColumns(newTableModel.colData)
 
 		self.table = newTable
 

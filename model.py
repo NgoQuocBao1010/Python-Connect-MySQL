@@ -62,7 +62,7 @@ class Congtrinh:
 	def formsField(cls):
 		return {
 			'arribute': ['Tên Công Trình', 'Địa Chỉ', 
-					'Tỉnh Thành', 'Kinh Phí (triệu đồng)', 
+					'Tỉnh Thành', 'Kinh Phí', 
 					'Ngày Bắt Đầu'
 					],
 			'forgeinKey': {
@@ -72,13 +72,13 @@ class Congtrinh:
 		}
 
 	@classmethod
-	def saveToDatabase(cls, values):
-		conn = ConnectionToMySQl()
-		idCtr = max(conn.getQueryset('select stt_ctr from cgtrinh'))[0] + 1
+	def saveToDatabase(cls, values, edit=False):
+		conn 		= ConnectionToMySQl()
+		idCtr 		= max(conn.getQueryset('select stt_ctr from cgtrinh'))[0] + 1 if not edit else values.get('STT')
 		tenctr 		= values.get('Tên Công Trình')
 		dchi   		= values.get('Địa Chỉ')
 		tthanh   	= values.get('Tỉnh Thành')
-		kphi   		= values.get('Kinh Phí (triệu đồng)')
+		kphi   		= values.get('Kinh Phí')
 		ngaybd   	= values.get('Ngày Bắt Đầu')
 		tenChu 		= values.get('Tên Chủ')
 		tenThau 	= values.get('Tên Thầu')
@@ -92,7 +92,13 @@ class Congtrinh:
 
 		
 		args = (idCtr, tenctr, dchi, tthanh, kphi, tenChu, tenThau, ngaybd)
-		conn.cursor.callproc('insertIntoCgtrinh', args)
+
+		if edit:
+			print(args)
+			conn.cursor.callproc('updateCgtrinh', args)
+		else:
+			conn.cursor.callproc('insertIntoCgtrinh', args)
+
 		conn.connection.commit()
 
 		return True
@@ -220,10 +226,10 @@ class Congnhan:
 	pk = 'hoten_cn'
 	colData = {}
 	sqlSyntax =  {
-			'hoten_cn': 'Tên Công Nhân',
-			'nams_cn': 'Năm Sinh',
-			'nam_vao_n': 'Năm Vào Nghề',
-			'ch_mon': 'Chuyên Môn'
+			'hoten_cn': 'Họ và tên',
+			'nams_cn': 'Năm sinh',
+			'nam_vao_n': 'Năm vào nghề',
+			'ch_mon': 'Chuyên môn'
 	}
 
 	@classmethod
@@ -272,11 +278,11 @@ class Ktrucsu:
 	pk='hoten_kts'
 	colData = {}
 	sqlSyntax =  {
-			'hoten_kts': 'Tên Chủ',
-			'nams_kts': 'Địa Chỉ',
+			'hoten_kts': 'Họ và tên',
+			'nams_kts': 'Năm sinh',
 			'phai': 'Phái',
-			'noi_tn': 'Nơi Tốt Nghiệp',
-			'dchi_ll_kts': 'Địa Chỉ'
+			'noi_tn': 'Nơi tốt nghiệp',
+			'dchi_ll_kts': 'Địa chỉ'
 	}
 
 	@classmethod
@@ -290,6 +296,7 @@ class Ktrucsu:
 	@classmethod
 	def saveToDatabase(cls, values):
 		conn = ConnectionToMySQl()
+		args = ()
 
 		tenkts 		= values.get('Họ và tên')
 		namsinhkts  = values.get('Năm sinh')

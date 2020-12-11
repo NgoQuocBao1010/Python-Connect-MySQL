@@ -53,12 +53,12 @@ class Form():
 
 		root.mainloop()	
 
-	def __init__(self, window, tableModel, app=None, values={}):
+	def __init__(self, window, tableModel, app=None, edit=False, values={}):
 		self.window = window
 		self.tableModel = tableModel
 		self.app = app
 		self.values = values
-		self.visible = True
+		self.edit = edit
 		self.contentFrame = tk.Frame(self.window)
 
 	def createGUI(self):
@@ -140,18 +140,17 @@ class Form():
 			entry = self.fieldInputs.get(field).get()
 			values.setdefault(field, entry)
 
+		if self.edit:
+			for field, data in self.values.items():
+				values.setdefault(field, data)
+
 		return values
 
 	def submit(self):
 		values = self.getValues()
 
-		for data in values.values():
-			if len(data) == 0:
-				messagebox.showerror('Error!!!', 'Please insert data before save')
-				return
-
 		try:
-			self.tableModel.saveToDatabase(values)
+			self.tableModel.saveToDatabase(values, self.edit)
 			messagebox.showinfo('Succesful!!', 'Your Data has been saved!!')
 			self.app.changeTableView(self.tableModel)
 			self.contentFrame.destroy()
@@ -159,7 +158,6 @@ class Form():
 		except Exception as e:
 			messagebox.showerror('Error!!!', str(e))
 
-		self.visible = False
 
 	def preFill(self):
 		if len(self.values) != 0:
