@@ -3,7 +3,6 @@ from tkinter import ttk
 from tkinter import messagebox
 
 from mysqlConnection import ConnectionToMySQl
-from tableGUI import TableGUI
 # from mainAppGui import application
 import model
 
@@ -54,15 +53,16 @@ class Form():
 
 		root.mainloop()	
 
-	def __init__(self, window, tableModel, values={}):
+	def __init__(self, window, tableModel, app=None, values={}):
 		self.window = window
 		self.tableModel = tableModel
+		self.app = app
 		self.values = values
-
+		self.visible = True
 		self.contentFrame = tk.Frame(self.window)
 
 	def createGUI(self):
-		self.contentFrame.pack(fill='both', expand='yes', padx=20, pady=10)
+		self.contentFrame.pack(fill='both', expand='yes', padx=10, pady=10)
 		fieldNames = self.tableModel.formsField().get('arribute')
 		self.fieldInputs = {}
 
@@ -129,6 +129,9 @@ class Form():
 						)
 		submitBtn.place(relx=0.85, rely=0.8, relwidth=0.1, relheight=0.07)
 
+		gobackBtn = tk.Button(self.contentFrame, bg='red', fg='white', text='Back', command=self.back)
+		gobackBtn.place(relx=0, rely=0, relwidth=0.1, relheight=0.07)
+
 		self.preFill()
 
 	def getValues(self):
@@ -144,16 +147,19 @@ class Form():
 
 		for data in values.values():
 			if len(data) == 0:
-				messagebox.showerror('Error!!!', 'Invalid format on fields: ' + field)
+				messagebox.showerror('Error!!!', 'Please insert data before save')
 				return
 
 		try:
 			self.tableModel.saveToDatabase(values)
 			messagebox.showinfo('Succesful!!', 'Your Data has been saved!!')
-			self.window.destroy()
+			self.app.changeTableView(self.tableModel)
+			self.contentFrame.destroy()
 
 		except Exception as e:
 			messagebox.showerror('Error!!!', str(e))
+
+		self.visible = False
 
 	def preFill(self):
 		if len(self.values) != 0:
@@ -161,6 +167,9 @@ class Form():
 				data = self.values.get(field)
 				var = self.fieldInputs.get(field).set(data)
 
+	def back(self):
+		self.contentFrame.destroy()
 
-val = {'Tên Công Trình': 'cxcxzczxc', 'Địa Chỉ': 'dasda', 'Tỉnh Thành': 'dasdas', 'Kinh Phí (triệu đồng)': 'asdasd', 'Ngày Bắt Đầu': 'asdasd', 'Tên Chủ': 'dai hoc can tho', 'Tên Thầu': 'cty xd so 6'}
-Form.createForm(model.Congtrinh)
+
+# val = {'Tên Công Trình': 'cxcxzczxc', 'Địa Chỉ': 'dasda', 'Tỉnh Thành': 'dasdas', 'Kinh Phí (triệu đồng)': 'asdasd', 'Ngày Bắt Đầu': 'asdasd', 'Tên Chủ': 'dai hoc can tho', 'Tên Thầu': 'cty xd so 6'}
+# Form.createForm(model.Congnhan)

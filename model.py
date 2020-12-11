@@ -7,7 +7,7 @@ class Congtrinh:
 	pk = 'stt_ctr'
 	colData = {
 		1 : {
-			'width': 80,
+			'width': 50,
 			'anchor': 'c'
 		},
 		2 : {
@@ -221,7 +221,7 @@ class Congnhan:
 	colData = {}
 	sqlSyntax =  {
 			'hoten_cn': 'Tên Công Nhân',
-			'nams_cn': 'Địa Chỉ',
+			'nams_cn': 'Năm Sinh',
 			'nam_vao_n': 'Năm Vào Nghề',
 			'ch_mon': 'Chuyên Môn'
 	}
@@ -297,7 +297,7 @@ class Ktrucsu:
 		noitn   	= values.get('Nơi tốt nghiệp')
 		dchi 		= values.get('Địa chỉ')
 
-		if not namsinhkts.isdigit():
+		if not phai.isdigit():
 			raise Exception('Wrong Format or Data Type in Field Năm sinh')
 		
 		args = (tenkts, namsinhkts, phai, noitn, dchi)

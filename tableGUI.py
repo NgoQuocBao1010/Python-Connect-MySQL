@@ -3,11 +3,12 @@ from tkinter import ttk
 
 from mysqlConnection import ConnectionToMySQl
 from table import TableTkinter
+from subGui import Form
 from model import *
 
 
 class TableGUI():
-	def __init__(self, window, model):
+	def __init__(self, window, model, app=None):
 		style = ttk.Style()
 		style.configure("mystyle.Treeview", 
 						highlightthickness=3, 
@@ -19,11 +20,13 @@ class TableGUI():
 
 		self.model = model
 		self.window = window
+		self.app = app
 
 		self.defaultStatement = f'select * from {self.model.table}'
 
 		# Label frames to hold component
 		self.tableFrame = tk.LabelFrame(self.window, text=self.model.tableName)
+		self.searchFrame = tk.LabelFrame(self.window, text='Search')
 
 		# Table and its crollbar component
 		self.trv = ttk.Treeview(self.tableFrame, show="headings", height="7", style="mystyle.Treeview")
@@ -32,26 +35,29 @@ class TableGUI():
 		self.updateData(self.defaultStatement)
 
 		# Searchbar
-		self.searchBtn = tk.Button(self.tableFrame, bg='green', fg='white', text='Search', command=self.search)
-		self.searchInput = tk.Entry(self.tableFrame)
+		self.searchBtn = tk.Button(self.searchFrame, bg='green', fg='white', text='Search', command=self.search)
+		self.searchInput = tk.Entry(self.searchFrame)
 		self.searchTopic = tk.StringVar()
 		self.searchTopic.set(self.columnSyntaxs[1])
-		self.filterDropDown = tk.OptionMenu(self.tableFrame, self.searchTopic, *self.columnSyntaxs)
+		self.filterDropDown = tk.OptionMenu(self.searchFrame, self.searchTopic, *self.columnSyntaxs)
 
 		# order by topic
-		self.orderLb = tk.Label(self.tableFrame, bg='black', fg='white', text='Order By')
+		self.orderLb = tk.Label(self.searchFrame, bg='black', fg='white', text='Order By')
 		# self.orderLb.place(relx=0.78, rely=0.05, relwidth=0.075, relheight=0.05)
 
 		self.orderByTopic = tk.StringVar()
 		self.orderByTopic.set(self.columnSyntaxs[1])
-		self.orderDropdown = tk.OptionMenu(self.tableFrame, self.orderByTopic, *self.columnSyntaxs)
+		self.orderDropdown = tk.OptionMenu(self.searchFrame, self.orderByTopic, *self.columnSyntaxs)
 		# self.orderDropdown.place(relx=0.85, rely=0.05, relwidth=0.12, relheight=0.05)
+
+		self.addBtn = tk.Button(self.searchFrame, fg='red', text='Add', command=self.addData)
 
 
 	def updateData(self, statement):
 		self.trv.delete(*self.trv.get_children())
 
 		mysqlConn = ConnectionToMySQl()
+		print(statement)
 		self.rows = mysqlConn.getQueryset(statement)
 		self.columnSyntaxs = mysqlConn.cursor.column_names
 
@@ -63,21 +69,23 @@ class TableGUI():
 			self.trv.insert('', 'end', values=data)
 
 	def createGUI(self):
-		self.tableFrame.pack(fill='both', expand='yes', padx=20, pady=10)
+		self.tableFrame.place(relx=0.05, rely=0.05, relwidth=0.95, relheight=0.5)
+		self.searchFrame.place(relx=0.05, rely=0.57, relwidth=1, relheight=0.3)
 
-		self.trv.pack(side='top', padx=10)
+		self.trv.pack(side='top', padx=2)
 
 
 		self.vsb.place(relx=0.97, rely=0, relwidth=0.02, relheight=0.7)
 		self.trv.configure(yscrollcommand=self.vsb.set)
 
-		self.searchBtn.place(relx=0.05, rely=0.9, relwidth=0.1, relheight=0.05)
-		self.searchInput.place(relx=0.16, rely=0.9, relwidth=0.25, relheight=0.05)
-		self.filterDropDown.place(relx=0.33, rely=0.9, relwidth=0.1, relheight=0.05)
+		self.searchBtn.place(relx=0.05, rely=0.05, relwidth=0.1, relheight=0.15)
+		self.searchInput.place(relx=0.16, rely=0.05, relwidth=0.25, relheight=0.15)
+		self.filterDropDown.place(relx=0.33, rely=0.05, relwidth=0.1, relheight=0.15)
 
-		self.orderLb.place(relx=0.45, rely=0.9, relwidth=0.1, relheight=0.05)
-		self.orderDropdown.place(relx=0.55, rely=0.9, relwidth=0.1, relheight=0.05)
+		self.orderLb.place(relx=0.45, rely=0.05, relwidth=0.1, relheight=0.15)
+		self.orderDropdown.place(relx=0.55, rely=0.05, relwidth=0.1, relheight=0.15)
 
+		self.addBtn.place(relx=0.05, rely=0.55, relwidth=0.1, relheight=0.15)
 
 		self.trv['columns'] = tuple(range(1, len(self.columns) + 1))
 		for column in range(1, len(self.columns) + 1):
@@ -105,9 +113,11 @@ class TableGUI():
 		orderCondition = " order by " + self.orderByTopic.get() + " desc"
 
 		statement = self.defaultStatement + condition + orderCondition
-		print(statement)
 		self.updateData(statement)
 
+	def addData(self):
+		form = Form(self.window, self.model, self.app)
+		form.createGUI()
 
 
 
