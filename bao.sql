@@ -1,5 +1,6 @@
 create database project character set utf8mb4;
 use project;
+drop database project;
 
 
 CREATE TABLE CGTRINH (
@@ -184,13 +185,7 @@ insert into  thietke values ('truong minh thai',   1       ,    12          );
 
 
 
-
-
-call getKTSbyCtrinh(6, t);
-
-SET @v1 := (select max(stt_ctr) from cgtrinh) ;
-SELECT @v1;
-
+-- Bang cong trinh
 DELIMITER //
 create procedure insertIntoCgtrinh(stt int, tenCtr varchar(50), dchi varchar(50), tthanh varchar(50), kphi int, tenchu varchar(50), tenthau varchar(50), nbatdau date)
 	Begin
@@ -198,17 +193,35 @@ create procedure insertIntoCgtrinh(stt int, tenCtr varchar(50), dchi varchar(50)
 	End //
 DELIMITER ;
 
-call insertIntoCgtrinh(9 ,'nha rieng 2','76 chau van liem' ,'ha noi', 100, 'phan thanh liem', 'tran khai hoan', '1994-09-06');
+-- call insertIntoCgtrinh(9 ,'nha rieng 2','76 chau van liem' ,'ha noi', 100, 'phan thanh liem', 'tran khai hoan', '1994-09-06');
 
 
+DELIMITER //
+create procedure updateCgtrinh(stt int, tenCtr varchar(50), dchi varchar(50), tthanh varchar(50), kphi int, tenchu varchar(50), tenthau varchar(50), nbatdau date)
+	Begin
+		update cgtrinh set ten_ctr=tenCtr,diachi_ctr=dchi,tinh_thanh=tthanh,kinh_phi=kphi,ten_chu=tenchu,ten_thau=tenthau,ngay_bd=nbatdau where stt_ctr=stt;
+	End //
+DELIMITER ;
+
+-- call updateCgtrinh(18 ,'testtest','76 chau van liem' ,'ha noi', 100, 'phan thanh liem', 'tran khai hoan', '1994-09-06');
+
+
+-- Bang chu thau
 DELIMITER //
 create procedure insertIntoChuthau(tenthau varchar(50), tel char(7), dchi varchar(50))
 	Begin
 		insert into  chuthau values (tenthau, tel, dchi); 
 	End //
 DELIMITER ;
-call insertIntoChuthau('cty TNHH NCHM', '1212', 'cau Hung Loi');
+-- call insertIntoChuthau('cty TNHH NCHM', '1212', 'cau Hung Loi');
 
+DELIMITER //
+create procedure updateChuthau(tenthau varchar(50), tel char(7), dchi varchar(50))
+	Begin
+		update chuthau set ten_thau=tenthau;
+	End //
+DELIMITER ;
+-- update chuthau set ten_thau='xin chao111' where ten_thau='cccccc';
 
 DELIMITER //
 create procedure insertIntoChunhan(tenthau varchar(50), dchi varchar(50))
@@ -216,7 +229,7 @@ create procedure insertIntoChunhan(tenthau varchar(50), dchi varchar(50))
 		insert into chunhan values (tenthau, dchi); 
 	End //
 DELIMITER ;
-call insertIntoChunhan('NCHM', 'cau Hung Loi');
+-- call insertIntoChunhan('NCHM', 'cau Hung Loi');
 
 
 DELIMITER //
@@ -225,7 +238,7 @@ create procedure insertIntoCongnhan(tencn varchar(50), nsinh int, nvaonghe int, 
 		insert into congnhan values (tencn, nsinh, nvaonghe, cmon); 
 	End //
 DELIMITER ;
-call insertIntoCongnhan('NCHM', 2000, 2012, 'java');
+-- call insertIntoCongnhan('NCHM', 2000, 2012, 'java');
 
 
 DELIMITER //
@@ -234,17 +247,12 @@ create procedure insertIntoKtrucsu(tenKts varchar(50), nskts int, phai int, noit
 		insert into ktrucsu values (tenkts, nskts, phai, noitn, dchi); 
 	End //
 DELIMITER ;
-call insertIntoKtrucsu('NCHM', 2000, 1, 'new york', 'cau hung loi');
+-- call insertIntoKtrucsu('NCHM', 2000, 1, 'new york', 'cau hung loi');
 
 
-DELIMITER //
-create procedure tongCNmoiCtrinh()
-	Begin
-		select stt_ctr, count(*) so_cn
-        from thamgia group by stt_ctr;
-	End //
-DELIMITER ;
-call tongCNmoiCtrinh();
+
+
+
 
 
 

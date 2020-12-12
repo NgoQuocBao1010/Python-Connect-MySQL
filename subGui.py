@@ -37,9 +37,11 @@ class Form():
 
 		def addNew(self):
 			values = self.form.getValues()
-			self.root.destroy()
-			Form.createForm(self.tModel)
-			Form.createForm(self.fModel, values)
+			self.form.contentFrame.pack_forget()
+			form = Form(self.form.window, self.tModel, pFormInfo=(self.form, values))
+			form.createGUI()
+			# Form.createForm(self.tModel)
+			# Form.createForm(self.fModel, values)
 
 	@classmethod
 	def createForm(cls, tableModel, values={}):
@@ -53,10 +55,11 @@ class Form():
 
 		root.mainloop()	
 
-	def __init__(self, window, tableModel, app=None, edit=False, values={}):
+	def __init__(self, window, tableModel, app=None, edit=False, pFormInfo=None, values={}):
 		self.window = window
 		self.tableModel = tableModel
 		self.app = app
+		self.pFormInfo = pFormInfo
 		self.values = values
 		self.edit = edit
 		self.contentFrame = tk.Frame(self.window)
@@ -153,7 +156,7 @@ class Form():
 			self.tableModel.saveToDatabase(values, self.edit)
 			messagebox.showinfo('Succesful!!', 'Your Data has been saved!!')
 			self.app.changeTableView(self.tableModel)
-			self.contentFrame.destroy()
+			self.back()
 
 		except Exception as e:
 			messagebox.showerror('Error!!!', str(e))
@@ -167,6 +170,11 @@ class Form():
 
 	def back(self):
 		self.contentFrame.destroy()
+
+		if self.pFormInfo is not None:
+			form = self.pFormInfo[0]
+			form.values = self.pFormInfo[1]
+			form.createGUI()
 
 
 # val = {'Tên Công Trình': 'cxcxzczxc', 'Địa Chỉ': 'dasda', 'Tỉnh Thành': 'dasdas', 'Kinh Phí (triệu đồng)': 'asdasd', 'Ngày Bắt Đầu': 'asdasd', 'Tên Chủ': 'dai hoc can tho', 'Tên Thầu': 'cty xd so 6'}

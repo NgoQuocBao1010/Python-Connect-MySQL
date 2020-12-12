@@ -137,6 +137,8 @@ class TableGUI():
 		form.createGUI()
 
 
+
+
 	def bindings(self):
 		self.trv.bind("<Double-1>", self.getFocusRow)
 
