@@ -160,7 +160,7 @@ class Chuthau:
 	}
 
 	@classmethod
-	def saveToDatabase(cls, values):
+	def saveToDatabase(cls, values, edit=False):
 		conn = ConnectionToMySQl()
 
 		tenThau 	= values.get('Tên Thầu')
@@ -202,7 +202,7 @@ class Chunhan:
 	}
 
 	@classmethod
-	def saveToDatabase(cls, values):
+	def saveToDatabase(cls, values, edit=False):
 		conn = ConnectionToMySQl()
 
 		tenThau 	= values.get('Tên Chủ')
@@ -241,7 +241,7 @@ class Congnhan:
 	}
 
 	@classmethod
-	def saveToDatabase(cls, values):
+	def saveToDatabase(cls, values, edit=False):
 		conn = ConnectionToMySQl()
 
 		tenCn 		= values.get('Họ và tên')
@@ -294,7 +294,7 @@ class Ktrucsu:
 	}
 
 	@classmethod
-	def saveToDatabase(cls, values):
+	def saveToDatabase(cls, values, edit=False):
 		conn = ConnectionToMySQl()
 		args = ()
 

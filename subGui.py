@@ -143,6 +143,9 @@ class Form():
 			entry = self.fieldInputs.get(field).get()
 			values.setdefault(field, entry)
 
+			if self.pFormInfo is not None:
+				self.pFormInfo[1][field] = entry
+
 		if self.edit:
 			for field, data in self.values.items():
 				values.setdefault(field, data)
@@ -155,7 +158,10 @@ class Form():
 		try:
 			self.tableModel.saveToDatabase(values, self.edit)
 			messagebox.showinfo('Succesful!!', 'Your Data has been saved!!')
-			self.app.changeTableView(self.tableModel)
+
+			if self.app is not None:
+				self.app.changeTableView(self.tableModel)
+
 			self.back()
 
 		except Exception as e:
@@ -174,8 +180,9 @@ class Form():
 		if self.pFormInfo is not None:
 			form = self.pFormInfo[0]
 			form.values = self.pFormInfo[1]
+			print(form.values)
 			form.createGUI()
 
 
 # val = {'Tên Công Trình': 'cxcxzczxc', 'Địa Chỉ': 'dasda', 'Tỉnh Thành': 'dasdas', 'Kinh Phí (triệu đồng)': 'asdasd', 'Ngày Bắt Đầu': 'asdasd', 'Tên Chủ': 'dai hoc can tho', 'Tên Thầu': 'cty xd so 6'}
-# Form.createForm(model.Congnhan)
+# Form.createForm(model.Chunhan)

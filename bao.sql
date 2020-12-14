@@ -223,6 +223,8 @@ create procedure updateChuthau(tenthau varchar(50), tel char(7), dchi varchar(50
 DELIMITER ;
 -- update chuthau set ten_thau='xin chao111' where ten_thau='cccccc';
 
+
+-- Bang Chu Nhan
 DELIMITER //
 create procedure insertIntoChunhan(tenthau varchar(50), dchi varchar(50))
 	Begin
@@ -231,7 +233,7 @@ create procedure insertIntoChunhan(tenthau varchar(50), dchi varchar(50))
 DELIMITER ;
 -- call insertIntoChunhan('NCHM', 'cau Hung Loi');
 
-
+-- Bang Cong Nhan
 DELIMITER //
 create procedure insertIntoCongnhan(tencn varchar(50), nsinh int, nvaonghe int, cmon varchar(50))
 	Begin
@@ -241,6 +243,7 @@ DELIMITER ;
 -- call insertIntoCongnhan('NCHM', 2000, 2012, 'java');
 
 
+-- Bang KTS
 DELIMITER //
 create procedure insertIntoKtrucsu(tenKts varchar(50), nskts int, phai int, noitn varchar(50), dchi varchar(50))
 	Begin
