@@ -4,7 +4,7 @@ from tkinter import messagebox
 
 from mysqlConnection import ConnectionToMySQl
 from table import TableTkinter
-from subGui import Form
+from formsGui import Form
 from model import *
 
 
@@ -53,7 +53,7 @@ class TableGUI():
 
 		self.addBtn = tk.Button(self.searchFrame, fg='red', text='Add', command=self.addData)
 		self.editBtn = tk.Button(self.searchFrame, fg='red', text='Edit', command=self.editData)
-		self.delBtn = tk.Button(self.searchFrame, fg='red', text='Delete', command=self.addData)
+		self.delBtn = tk.Button(self.searchFrame, fg='red', text='Delete', command=self.deleteData)
 
 
 	def updateData(self, statement):
@@ -135,6 +135,19 @@ class TableGUI():
 		obj = dict(zip(self.model.sqlSyntax.values(), selectedVal))
 		form = Form(self.window, self.model, app=self.app, edit=True, values=obj)
 		form.createGUI()
+
+	def deleteData(self):
+		selected = self.trv.focus()
+		if len(selected) == 0:
+			messagebox.showwarning('Warning', 'Please choose a item you want to edit!')
+			return
+
+		selectedVal = self.trv.item(selected)['values']
+		obj = dict(zip(self.model.sqlSyntax.values(), selectedVal))
+		self.model.deleteFromDb(obj)
+
+		if self.app is not None:
+			self.app.changeTableView(self.model)
 
 
 

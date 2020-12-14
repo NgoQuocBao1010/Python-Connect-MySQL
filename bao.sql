@@ -11,20 +11,25 @@ CREATE TABLE CGTRINH (
 	KINH_PHI int NULL ,
 	TEN_CHU varchar (50)  NULL ,
 	TEN_THAU varchar (50)  NULL ,
-	NGAY_BD date NULL 
+	NGAY_BD date NULL,
+    primary key(stt_ctr),
+    FOREIGN KEY (TEN_CHU) REFERENCES  CHUNHAN (	TEN_CHU	) on delete set null,
+    FOREIGN KEY (TEN_THAU) REFERENCES  CHUTHAU (TEN_THAU) on delete set null
 );
 
 
 CREATE TABLE  CHUNHAN (
 	TEN_CHU varchar (50)  NOT NULL ,
-	DCHI_CHU varchar (50)  NULL 
+	DCHI_CHU varchar (50)  NULL ,
+    primary key(ten_chu)
 ) ;
 
 
 CREATE TABLE  CHUTHAU (
 	TEN_THAU varchar (20)  NOT NULL ,
 	TEL char (7)  NULL ,
-	DCHI_THAU varchar (20)  NULL 
+	DCHI_THAU varchar (20)  NULL ,
+    primary key(ten_thau)
 ) ;
 
 
@@ -32,7 +37,8 @@ CREATE TABLE  CONGNHAN (
 	HOTEN_CN varchar (50)  NOT NULL ,
 	NAMS_CN int NULL ,
 	NAM_VAO_N int NULL ,
-	CH_MON varchar (50)  NULL 
+	CH_MON varchar (50)  NULL, 
+    primary key(hoten_cn)
 ) ;
 
 
@@ -41,7 +47,8 @@ CREATE TABLE  KTRUCSU (
 	NAMS_KTS int NULL ,
 	PHAI char (2)  NULL ,
 	NOI_TN varchar (50)  NULL ,
-	DCHI_LL_KTS varchar (30)  NULL 
+	DCHI_LL_KTS varchar (30)  NULL ,
+    primary key(hoten_kts)
 ) ;
 
 
@@ -49,68 +56,21 @@ CREATE TABLE  THAMGIA (
 	HOTEN_CN varchar (50)  NOT NULL ,
 	STT_CTR int NOT NULL ,
 	NGAY_TGIA date NULL ,
-	SO_NGAY int NULL 
+	SO_NGAY int NULL ,
+    PRIMARY KEY  (HOTEN_CN,	STT_CTR	),
+    FOREIGN KEY (STT_CTR) REFERENCES  CGTRINH (STT_CTR) on delete cascade,
+    FOREIGN KEY (HOTEN_CN) REFERENCES  CONGNHAN (HOTEN_CN) on delete cascade
 ) ;
 
 
 CREATE TABLE  THIETKE (
 	HOTEN_KTS varchar (50)  NOT NULL ,
 	STT_CTR int NOT NULL ,
-	THU_LAO int NULL 
+	THU_LAO int NULL ,
+	PRIMARY KEY  	(	HOTEN_KTS,	STT_CTR	),
+	FOREIGN KEY 	(STT_CTR) REFERENCES  CGTRINH (	STT_CTR	) on delete cascade,
+    FOREIGN KEY (	HOTEN_KTS	) REFERENCES  KTRUCSU (	HOTEN_KTS ) on delete cascade
 ) ;
-
-
-ALTER TABLE  CGTRINH ADD 
-	CONSTRAINT PK_CGTRINH PRIMARY KEY  	(STT_CTR)  ; 
-
-
-ALTER TABLE  CHUNHAN ADD 
-	CONSTRAINT PK_CHUNHAN PRIMARY KEY  (	TEN_CHU	)  ; 
-
-
-ALTER TABLE  CHUTHAU ADD 
-	CONSTRAINT PK_CHUTHAU PRIMARY KEY  (	TEN_THAU	)  ; 
-
-
-ALTER TABLE  CONGNHAN ADD 
-	CONSTRAINT PK_CONGNHAN PRIMARY KEY  (	HOTEN_CN	)  ; 
-
-
-ALTER TABLE  KTRUCSU ADD 
-	CONSTRAINT PK_KTRUCSU PRIMARY KEY  	(	HOTEN_KTS	)  ; 
-
-
-ALTER TABLE  THAMGIA ADD 
-	CONSTRAINT PK_THAMGIA PRIMARY KEY  	(	HOTEN_CN,	STT_CTR	)  ; 
-
-
-ALTER TABLE  THIETKE ADD 
-	CONSTRAINT PK_THIETKE PRIMARY KEY  	(	HOTEN_KTS,	STT_CTR	)  ; 
-
-
-ALTER TABLE  CGTRINH ADD 
-	CONSTRAINT FK_CGTRINH_CHUNHAN FOREIGN KEY 	(	TEN_CHU	) REFERENCES  CHUNHAN (	TEN_CHU	);
-
-ALTER TABLE  CGTRINH ADD 
-	CONSTRAINT FK_CGTRINH_CHUTHAU FOREIGN KEY 
-	(	TEN_THAU	) REFERENCES  CHUTHAU (	TEN_THAU	);
-
-
-ALTER TABLE  THAMGIA ADD 
-	CONSTRAINT FK_THAMGIA_CGTRINH FOREIGN KEY 
-	(		STT_CTR	) REFERENCES  CGTRINH (		STT_CTR	);
-
-ALTER TABLE  THAMGIA ADD 
-	CONSTRAINT FK_THAMGIA_CONGNHAN FOREIGN KEY 
-	(		HOTEN_CN	) REFERENCES  CONGNHAN (		HOTEN_CN	);
-
-
-ALTER TABLE  THIETKE ADD 
-	CONSTRAINT FK_THIETKE_CGTRINH FOREIGN KEY 	(STT_CTR) REFERENCES  CGTRINH (	STT_CTR	);
-
-ALTER TABLE  THIETKE ADD 
-	CONSTRAINT FK_THIETKE_KTRUCSU FOREIGN KEY 
-	(	HOTEN_KTS	) REFERENCES  KTRUCSU (	HOTEN_KTS );
 
 
 insert into  chunhan values ('so thuong mai du lich', '54 xo viet nghe tinh');
@@ -202,8 +162,19 @@ create procedure updateCgtrinh(stt int, tenCtr varchar(50), dchi varchar(50), tt
 		update cgtrinh set ten_ctr=tenCtr,diachi_ctr=dchi,tinh_thanh=tthanh,kinh_phi=kphi,ten_chu=tenchu,ten_thau=tenthau,ngay_bd=nbatdau where stt_ctr=stt;
 	End //
 DELIMITER ;
-
 -- call updateCgtrinh(18 ,'testtest','76 chau van liem' ,'ha noi', 100, 'phan thanh liem', 'tran khai hoan', '1994-09-06');
+
+
+DELIMITER //
+create procedure xoaCgtrinh(stt int)
+	Begin
+		delete from cgtrinh where stt_ctr=stt;
+    End//
+DELIMITER ;
+-- call xoaCgtrinh(9);
+
+
+
 
 
 -- Bang chu thau
@@ -216,12 +187,28 @@ DELIMITER ;
 -- call insertIntoChuthau('cty TNHH NCHM', '1212', 'cau Hung Loi');
 
 DELIMITER //
-create procedure updateChuthau(tenthau varchar(50), tel char(7), dchi varchar(50))
+create procedure updateChuthau(tenthaucu varchar(50), tenthaumoi varchar(50), sdt char(7), dchi varchar(50))
 	Begin
-		update chuthau set ten_thau=tenthau;
+		set FOREIGN_KEY_CHECKS = 0;
+		update chuthau set ten_thau=tenthaumoi, tel=sdt, dchi_thau=dchi where ten_thau=tenthaucu;
+        update cgtrinh set ten_thau=tenthaumoi where ten_thau=tenthaucu;
+        set FOREIGN_KEY_CHECKS = 1;
 	End //
 DELIMITER ;
 -- update chuthau set ten_thau='xin chao111' where ten_thau='cccccc';
+-- call updateChuthau('nchm2', 'nchm3', '123', 'ct');
+
+DELIMITER //
+create procedure xoaChuThau(tenthau varchar(50))
+	Begin
+		delete from chuthau where ten_thau=tenthau;
+    End//
+DELIMITER ;
+-- call xoaChuThau('nchm2');
+
+
+
+
 
 
 -- Bang Chu Nhan
@@ -233,6 +220,19 @@ create procedure insertIntoChunhan(tenthau varchar(50), dchi varchar(50))
 DELIMITER ;
 -- call insertIntoChunhan('NCHM', 'cau Hung Loi');
 
+DELIMITER //
+create procedure xoaChuNhan(tenchu varchar(50))
+	Begin
+		delete from chunhan where ten_chu=tenchu;
+    End//
+DELIMITER ;
+-- call xoaChuNhan('bao bao');
+
+
+
+
+
+
 -- Bang Cong Nhan
 DELIMITER //
 create procedure insertIntoCongnhan(tencn varchar(50), nsinh int, nvaonghe int, cmon varchar(50))
@@ -241,6 +241,22 @@ create procedure insertIntoCongnhan(tencn varchar(50), nsinh int, nvaonghe int, 
 	End //
 DELIMITER ;
 -- call insertIntoCongnhan('NCHM', 2000, 2012, 'java');
+
+DELIMITER //
+create procedure xoaCongNhan(tencn varchar(50))
+	Begin
+		delete from congnhan where hoten_cn=tencn;
+    End//
+DELIMITER ;
+-- call xoaCongNhan('test');
+
+
+-- update chunhan set ten_chu='test 2' where ten_chu='test';
+
+
+
+
+
 
 
 -- Bang KTS
@@ -252,7 +268,13 @@ create procedure insertIntoKtrucsu(tenKts varchar(50), nskts int, phai int, noit
 DELIMITER ;
 -- call insertIntoKtrucsu('NCHM', 2000, 1, 'new york', 'cau hung loi');
 
-
+DELIMITER //
+create procedure xoaKtrucsu(tenKts varchar(50))
+	Begin
+		delete from ktrucsu where hoten_kts=tenKts;
+    End//
+DELIMITER ;
+-- call xoaCongNhan('test');
 
 
 

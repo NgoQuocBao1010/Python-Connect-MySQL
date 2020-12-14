@@ -103,6 +103,20 @@ class Congtrinh:
 
 		return True
 
+	@classmethod
+	def deleteFromDb(cls, values):
+		for syn, field in cls.sqlSyntax.items():
+			if syn == cls.pk:
+				data = values.get(field)
+				print("Du lieu xoa: ", data)
+
+				try:
+					args = (data, )
+					conn 		= ConnectionToMySQl()
+					conn.cursor.callproc('xoaCgtrinh', args)
+					conn.connection.commit()
+				except Exception as e:
+					print(str(e))
 
 	def __init__(self, stt, tenctr, diachi, tinhthanh, kinhphi, tenchu, tenthau, ngaybatdau):
 		self.stt = stt
@@ -145,8 +159,8 @@ class Chuthau:
 	tableName = 'Nhà Thầu'
 	pk = 'ten_thau'
 	sqlSyntax =  {
-			'tel': 'SDT',
 			'ten_thau': 'Tên Thầu',
+			'tel': 'SDT',
 			'dchi_thau': 'Địa Chỉ',
 	}
 	colData = {}
@@ -154,7 +168,7 @@ class Chuthau:
 	@classmethod
 	def formsField(cls):
 		return {
-			'arribute': ['Tên Thầu', 'Địa Chỉ', 'Số điện thoại'],
+			'arribute': ['Tên Thầu', 'Địa Chỉ', 'SDT'],
 			'forgeinKey': {
 			}
 	}
@@ -165,7 +179,7 @@ class Chuthau:
 
 		tenThau 	= values.get('Tên Thầu')
 		dchi   		= values.get('Địa Chỉ')
-		sdt 		= values.get('Số điện thoại')
+		sdt 		= values.get('SDT')
 		
 		if not sdt.isdigit():
 			raise Exception('Wrong Format or Data Type in Field Số điện thoại')
@@ -176,6 +190,21 @@ class Chuthau:
 		conn.connection.commit()
 
 		return True
+
+	@classmethod
+	def deleteFromDb(cls, values):
+		for syn, field in cls.sqlSyntax.items():
+			if syn == cls.pk:
+				data = values.get(field)
+				print("Du lieu xoa: ", data)
+
+				try:
+					args = (data, )
+					conn 		= ConnectionToMySQl()
+					conn.cursor.callproc('xoaChuThau', args)
+					conn.connection.commit()
+				except Exception as e:
+					print(str(e))
 
 	def __init__(self, tenthau, tel, diachi):
 		self.tenthau = tenthau
@@ -214,6 +243,21 @@ class Chunhan:
 		conn.connection.commit()
 
 		return True
+
+	@classmethod
+	def deleteFromDb(cls, values):
+		for syn, field in cls.sqlSyntax.items():
+			if syn == cls.pk:
+				data = values.get(field)
+				print("Du lieu xoa ", data)
+
+				try:
+					args = (data, )
+					conn 		= ConnectionToMySQl()
+					conn.cursor.callproc('xoaChuNhan', args)
+					conn.connection.commit()
+				except Exception as e:
+					print(str(e))
 	
 	def __init__(self, tenchu, diachi):
 		self.tenchu = tenchu
@@ -262,6 +306,21 @@ class Congnhan:
 
 		return True
 
+	@classmethod
+	def deleteFromDb(cls, values):
+		for syn, field in cls.sqlSyntax.items():
+			if syn == cls.pk:
+				data = values.get(field)
+				print("Du lieu xoa ", data)
+
+				try:
+					args = (data, )
+					conn 		= ConnectionToMySQl()
+					conn.cursor.callproc('xoaCongNhan', args)
+					conn.connection.commit()
+				except Exception as e:
+					print(str(e))
+
 	def __init__(self, hotencn, namsinhcn, namvaonghe, chuyenmon):
 		self.hotencn = hotencn
 		self.namsinhcn = namsinhcn
@@ -308,8 +367,33 @@ class Ktrucsu:
 			raise Exception('Wrong Format or Data Type in Field Năm sinh')
 		
 		args = (tenkts, namsinhkts, phai, noitn, dchi)
-		conn.cursor.callproc('insertIntoKtrucsu', args)
+
+		if edit:
+			print(args)
+			conn.cursor.callproc('updateCgtrinh', args)
+		else:
+			conn.cursor.callproc('insertIntoKtrucsu', args)
+
 		conn.connection.commit()
+
+		return True
+
+	@classmethod
+	def deleteFromDb(cls, values):
+		for syn, field in cls.sqlSyntax.items():
+			if syn == cls.pk:
+				data = values.get(field)
+				print("Du lieu xoa ", data)
+
+				try:
+					args = (data, )
+					conn 		= ConnectionToMySQl()
+					conn.cursor.callproc('xoaKtrucsu', args)
+					conn.connection.commit()
+				except Exception as e:
+					print(str(e))
+
+		
 
 	def __init__(self, hotenkts, namsinhkts, phai, noitn, diachi_ll_kts):
 		self.hotenkts = hotenkts
