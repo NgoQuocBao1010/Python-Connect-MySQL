@@ -173,9 +173,9 @@ class Chuthau:
 			}
 	}
 
+	# method to save data to database whether if the data is new or edited
 	@classmethod
 	def saveToDatabase(cls, values, edit=False):
-		conn = ConnectionToMySQl()
 
 		tenThau 	= values.get('Tên Thầu')
 		dchi   		= values.get('Địa Chỉ')
@@ -184,10 +184,18 @@ class Chuthau:
 		if not sdt.isdigit():
 			raise Exception('Wrong Format or Data Type in Field Số điện thoại')
 
-		
+		conn = ConnectionToMySQl()
 		args = (tenThau, sdt, dchi)
-		conn.cursor.callproc('insertIntoChuthau', args)
+
+		if edit:
+			oldPk = values.get('oldPk')
+			args = (oldPk, *args)
+			conn.cursor.callproc('updateChuthau', args)
+
+		else:
+			conn.cursor.callproc('insertIntoChuthau', args)
 		conn.connection.commit()
+
 
 		return True
 
@@ -232,14 +240,21 @@ class Chunhan:
 
 	@classmethod
 	def saveToDatabase(cls, values, edit=False):
-		conn = ConnectionToMySQl()
-
 		tenThau 	= values.get('Tên Chủ')
 		dchi   		= values.get('Địa Chỉ')
 
 		
 		args = (tenThau, dchi)
-		conn.cursor.callproc('insertIntoChunhan', args)
+		conn = ConnectionToMySQl()
+
+		if edit:
+			oldPk = values.get('oldPk')
+			args = (oldPk, *args)
+			conn.cursor.callproc('updateChunhan', args)
+
+		else:
+			conn.cursor.callproc('insertIntoChunhan', args)
+
 		conn.connection.commit()
 
 		return True
@@ -286,8 +301,6 @@ class Congnhan:
 
 	@classmethod
 	def saveToDatabase(cls, values, edit=False):
-		conn = ConnectionToMySQl()
-
 		tenCn 		= values.get('Họ và tên')
 		namsinhcn   = values.get('Năm sinh')
 		namvaonghe  = values.get('Năm vào nghề')
@@ -299,9 +312,17 @@ class Congnhan:
 		if namsinhcn > namvaonghe:
 			raise Exception('Năm sinh không lớn hơn Năm vào nghề')
 
-		
+		conn = ConnectionToMySQl()
 		args = (tenCn, namsinhcn, namvaonghe, chuyenmon)
-		conn.cursor.callproc('insertIntoCongnhan', args)
+
+		if edit:
+			oldPk = values.get('oldPk')
+			args = (oldPk, *args)
+			conn.cursor.callproc('updateCongnhan', args)
+
+		else:
+			conn.cursor.callproc('insertIntoCongnhan', args)
+
 		conn.connection.commit()
 
 		return True
@@ -354,7 +375,6 @@ class Ktrucsu:
 
 	@classmethod
 	def saveToDatabase(cls, values, edit=False):
-		conn = ConnectionToMySQl()
 		args = ()
 
 		tenkts 		= values.get('Họ và tên')
@@ -366,14 +386,16 @@ class Ktrucsu:
 		if not phai.isdigit():
 			raise Exception('Wrong Format or Data Type in Field Năm sinh')
 		
+		conn = ConnectionToMySQl()
 		args = (tenkts, namsinhkts, phai, noitn, dchi)
 
 		if edit:
-			print(args)
-			conn.cursor.callproc('updateCgtrinh', args)
+			oldPk = values.get('oldPk')
+			args = (oldPk, *args)
+			conn.cursor.callproc('updateKtrucsu', args)
+
 		else:
 			conn.cursor.callproc('insertIntoKtrucsu', args)
-
 		conn.connection.commit()
 
 		return True

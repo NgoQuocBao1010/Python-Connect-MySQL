@@ -40,8 +40,7 @@ class Form():
 			self.form.contentFrame.pack_forget()
 			form = Form(self.form.window, self.tModel, pFormInfo=(self.form, values))
 			form.createGUI()
-			# Form.createForm(self.tModel)
-			# Form.createForm(self.fModel, values)
+
 
 	@classmethod
 	def createForm(cls, tableModel, values={}):
@@ -173,6 +172,11 @@ class Form():
 			for field in self.fieldInputs.keys():
 				data = self.values.get(field)
 				var = self.fieldInputs.get(field).set(data)
+
+			# Get old primary key's data before making changes
+			oldPk = list(self.tableModel.sqlSyntax.values())[0]
+			oldData = self.values.get(oldPk)
+			self.values.setdefault('oldPk', oldData)
 
 	def back(self):
 		self.contentFrame.destroy()

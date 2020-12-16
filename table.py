@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-
+import tkinter.tix as tix
 
 
 class TableTkinter():
@@ -51,3 +51,11 @@ class TableTkinter():
 		self.table.delete(*self.table.get_children())
 		for row in data:
 			self.table.insert("", 'end', values=row)
+
+
+root = tk.Tk()
+root.geometry('1000x400')
+
+table = TableTkinter(root, 0.05, 0.05, 0.9, 0.7)
+
+root.mainloop()
