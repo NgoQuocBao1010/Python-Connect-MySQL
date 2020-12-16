@@ -2,35 +2,36 @@ from tkinter import *
 from tkinter import ttk
 
 root = Tk()
+root.title('Learn To Code at Codemy.com')
+root.geometry("500x400")
 
-wrapper1 = LabelFrame(root)
-wrapper2 = LabelFrame(root)
+# Create A Main Frame
+main_frame = Frame(root)
+main_frame.pack(fill=BOTH, expand=1)
 
-mycanvas = Canvas(wrapper1)
-mycanvas.place(relx=0, rely=0, relwidth=1, relheight=1)
+# Create A Canvas
+my_canvas = Canvas(main_frame)
+my_canvas.pack(side=LEFT, fill=BOTH, expand=1)
 
-ycrollbar = ttk.Scrollbar(wrapper1, orient='vertical', command=mycanvas.yview)
-# ycrollbar.pack(side=RIGHT, fill='y')
-ycrollbar.place(relx=0.9, rely=0, relwidth=0.02, relheight=1)
+# Add A Scrollbar To The Canvas
+my_scrollbar = ttk.Scrollbar(main_frame, orient=VERTICAL, command=my_canvas.yview)
+my_scrollbar.pack(side=RIGHT, fill=Y)
 
-mycanvas.configure(yscrollcommand=ycrollbar.set)
+# Configure The Canvas
+my_canvas.configure(yscrollcommand=my_scrollbar.set)
+my_canvas.bind('<Configure>', lambda e: my_canvas.configure(scrollregion = my_canvas.bbox("all")))
 
-mycanvas.bind('<Configure>', lambda e: mycanvas.configure(scrollregion=mycanvas.bbox('all')))
+# Create ANOTHER Frame INSIDE the Canvas
+second_frame = Frame(my_canvas)
 
-myFrame = ttk.Frame(mycanvas)
-myFrame.place(relx=0, rely=0, relwidth=0.3, relheight=1)
-# mycanvas.create_window((0, 0), window=myFrame, anchor='nw')
+# Add that New frame To a Window In The Canvas
+my_canvas.create_window((0,0), window=second_frame, anchor="nw")
 
-wrapper1.pack(fill='both', expand='yes', padx=10, pady=10)
-wrapper2.pack(fill='both', expand='yes', padx=10, pady=10)
+for thing in range(100):
+	Entry(second_frame, text=f'Button {thing} Yo!').grid(row=thing, column=0, pady=10, padx=10)
+	Button(second_frame, text=f'Button {thing} Yo!').grid(row=thing, column=1, pady=10, padx=10)
 
-f = 0.1
-for i in range(50):
-	b = Button(myFrame, text=f'My Button - {i}')
-	b.place(relx=0, rely=f, relwidth=0.5, relheight=0.1)
-	# Frame(myFrame, bg='blue').place(relx=0, rely=f, relwidth=0.5, relheight=0.1)
-	f += 0.2
+my_label = Label(second_frame, text="It's Friday Yo!").grid(row=3, column=2)
 
-root.geometry('500x500')
-root.title('Myscrollbar')
+
 root.mainloop()
