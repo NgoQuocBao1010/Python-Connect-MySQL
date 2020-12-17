@@ -3,7 +3,7 @@ from tkinter import ttk
 from tkinter import messagebox
 
 from mysqlConnection import ConnectionToMySQl
-# from mainAppGui import application
+from checkList import *
 import model
 
 TITLE_FONT = ("Comic Sans MS", 25, "bold")
@@ -120,6 +120,9 @@ class Form():
 			)
 
 			lbRely += 0.3
+
+
+		manyToManyField = self.tableModel.formsField().get("manyToMany").keys()
 
 		
 

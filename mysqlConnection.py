@@ -58,14 +58,14 @@ conn = mysql.connector.connect(
 )
 
 
-cursor = conn.cursor()
+# cursor = conn.cursor()
 
-cursor.callproc('getCongnhan', (1, ))
-ids = cursor.stored_results()
+# cursor.callproc('getCongnhan', (1, ))
+# ids = cursor.stored_results()
 
-for i in ids:
-	print(i.fetchall())
-conn.commit()
+# for i in ids:
+# 	print(i.fetchall())
+# conn.commit()
 
 
 # cursor.execute("call getKTSbyCtrinh(6);", multi=True)

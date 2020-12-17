@@ -3,7 +3,6 @@ from tkinter import ttk
 from tkinter import messagebox
 
 from mysqlConnection import ConnectionToMySQl
-from table import TableTkinter
 from formsGui import Form
 from model import *
 
@@ -56,12 +55,15 @@ class TableGUI():
 		self.delBtn = tk.Button(self.searchFrame, fg='red', text='Delete', command=self.deleteData)
 
 
+	# update data from database
 	def updateData(self, statement):
 		self.trv.delete(*self.trv.get_children())
 
 		mysqlConn = ConnectionToMySQl()
-		print(statement)
 		self.rows = mysqlConn.getQueryset(statement)
+
+		# get columns heading
+		# ************ need to clean
 		self.columnSyntaxs = mysqlConn.cursor.column_names
 
 		self.columns = []

@@ -68,6 +68,10 @@ class Congtrinh:
 			'forgeinKey': {
 				'Tên Chủ': Chunhan, 
 				'Tên Thầu': Chuthau,
+			},
+			'manyToMany': {
+				'Công Nhân': Congnhan,
+				'Kiến Trúc Sư': Ktrucsu
 			}
 		}
 
@@ -426,6 +430,25 @@ class Ktrucsu:
 
 	def __str__(self):
 		return self.hotenkts
+
+
+class Thamgia:
+	table =  'thamgia'
+	tableName = 'Tham Gia'
+	pk = 'hoten_kts'
+	colData = {}
+	sqlSyntax =  {
+			'hoten_cn': 'Họ và tên',
+			'stt_ctr': 'STT',
+			'ngay_tgia': 'Ngày tham gia',
+			'so_ngay': 'Số ngày',
+	}
+
+	def __init__(self, hotenCn, sttctr, ngayTG, soNgay):
+		self.hoten_cn = hotenCn
+		self.stt_ctr = sttctr
+		self.ngay_tgia = ngayTG
+		self.so_ngay = soNgay
 
 
 # Congtrinh.createAnObj()
