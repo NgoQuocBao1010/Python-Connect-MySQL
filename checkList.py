@@ -4,9 +4,10 @@ from PIL import ImageTk
 import  PIL.Image
 
 from test2 import *
+from model import *
 from mysqlConnection import ConnectionToMySQl
 
-def checkList():
+def checkList(tableModel, objectKey):
 	def test(event):
 		row = table.identify_row(event.y)
 		tag = table.item(row, 'tags')[0]
@@ -18,17 +19,45 @@ def checkList():
 
 
 	def getChecked():
+		values = []
 		for rowId in table.get_children():
 			row = table.item(rowId)
 			itemsTag = row['tags'][0]
 
 			if itemsTag == 'checked':
-				print(row)
+				values.append(row['values'][0])
+
+		if type(objectKey) is Congtrinh:
+			values = [values, objectKey]
+
+		else:
+			values = [objectKey, values]
+
+		root.destroy()
+		scrollFrame(values, tModel)
 
 
 
 	root = tk.Tk()
 	root.geometry('1000x400')
+
+	mysqlConn = ConnectionToMySQl()
+	model = tableModel.table
+	modelName = tableModel.tableName
+	field = tableModel.imptField
+	colName = tableModel.sqlSyntax.get(field)
+
+	if type(objectKey) is Congtrinh:
+		tModel = Thamgia if model == 'congnhan' else Thietke
+
+	else:
+		tModel = Thamgia if type(objectKey) is Congnhan else Thietke
+		# data = mysqlConn.getQueryset(f'select {field} from {tModel.table}')
+
+
+	textLb = 'Chọn ' + modelName + ' cho ' + objectKey.tableName + ' ' + str(objectKey)
+	nameLb = tk.Label(root, text=textLb)
+	nameLb.place(relx=0.05, rely=0.05, relwidth=0.4, relheight=0.05)
 
 	table = ttk.Treeview(root, columns=(1, ))
 	table.place(relx=0.05, rely=0.1, relwidth=0.9, relheight=0.7)
@@ -54,10 +83,9 @@ def checkList():
 	table.tag_configure('bg', background='yellow')
 
 	table.heading(0, text='')
-	table.heading(1, text='Ho ten CN')
+	table.heading(1, text=colName)
 
-	mysqlConn = ConnectionToMySQl()
-	rows = mysqlConn.getQueryset('select hoten_cn from congnhan')
+	rows = mysqlConn.getQueryset(f'select {field} from {model}')
 
 	for data in rows:
 		table.insert("", "end", values=data, tags='unchecked')
@@ -68,5 +96,41 @@ def checkList():
 	root.mainloop()
 
 
+v = {
+	'STT': 8, 
+	'Tên Công Trình': 'nha rieng cua bao', 
+	'Địa Chỉ': 'hung phu', 
+	'Tỉnh Thành': 'ha noi', 
+	'Kinh Phí': 100, 
+	'Tên Chủ': 'quoc bao', 
+	'Tên Thầu': 'tran khai hoan', 
+	'Ngày Bắt Đầu': '1994-09-06'
+}
 
-checkList()
+obj = Congtrinh(*v.values())
+# print(type(obj) is Congtrinh)
+
+a = {
+	'Họ và tên': 'le quyet thang', 
+	'Năm sinh': 54, 
+	'Năm vào nghề': 74, 
+	'Chuyên môn': 'son'
+}
+
+obj2 = Congnhan(*a.values())
+
+ty = {
+	'Họ và tên': 'nguyen thi anh thu', 
+	'Năm sinh': 1970, 
+	'Phái': 0, 
+	'Nơi tốt nghiệp': 
+	'new orlean usa', 
+	'Địa chỉ': 'khu i dhct tp can tho'
+	}
+
+obj3 = Ktrucsu(*ty.values())
+
+
+# checkList(Congtrinh, objectKey=obj2)
+# checkList(Congnhan, objectKey=obj)
+# checkList(Congtrinh, objectKey=obj3)

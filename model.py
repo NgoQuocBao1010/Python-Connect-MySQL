@@ -5,6 +5,7 @@ class Congtrinh:
 	table = 'cgtrinh'
 	tableName = 'Công Trình'
 	pk = 'stt_ctr'
+	imptField = 'ten_ctr'
 	colData = {
 		1 : {
 			'width': 50,
@@ -162,6 +163,7 @@ class Chuthau:
 	table = 'chuthau'
 	tableName = 'Nhà Thầu'
 	pk = 'ten_thau'
+	imptField = 'ten_thau'
 	sqlSyntax =  {
 			'ten_thau': 'Tên Thầu',
 			'tel': 'SDT',
@@ -228,6 +230,7 @@ class Chunhan:
 	table = 'chunhan'
 	tableName = 'Chủ Nhà'
 	pk = 'ten_chu'
+	imptField = 'ten_chu'
 	colData = {}
 	sqlSyntax =  {
 			'ten_chu': 'Tên Chủ',
@@ -286,7 +289,7 @@ class Chunhan:
 class Congnhan:
 	table = 'congnhan'
 	tableName = 'Công Nhân'
-	pk = 'hoten_cn'
+	imptField = pk = 'hoten_cn'
 	colData = {}
 	sqlSyntax =  {
 			'hoten_cn': 'Họ và tên',
@@ -358,8 +361,8 @@ class Congnhan:
 
 class Ktrucsu:
 	table =  'ktrucsu'
-	tableName = 'ktrucsu'
-	pk='hoten_kts'
+	tableName = 'Kiến Trúc Sư'
+	imptField = pk='hoten_kts'
 	colData = {}
 	sqlSyntax =  {
 			'hoten_kts': 'Họ và tên',
@@ -435,7 +438,7 @@ class Ktrucsu:
 class Thamgia:
 	table =  'thamgia'
 	tableName = 'Tham Gia'
-	pk = 'hoten_kts'
+
 	colData = {}
 	sqlSyntax =  {
 			'hoten_cn': 'Họ và tên',
@@ -444,12 +447,66 @@ class Thamgia:
 			'so_ngay': 'Số ngày',
 	}
 
+	@classmethod
+	def formsField(cls):
+		return {
+			'arribute': ['Họ và tên', 'Tên Công Trình', 'Ngày tham gia', 'Số ngày'],
+		}
+
 	def __init__(self, hotenCn, sttctr, ngayTG, soNgay):
 		self.hoten_cn = hotenCn
 		self.stt_ctr = sttctr
 		self.ngay_tgia = ngayTG
 		self.so_ngay = soNgay
 
+class Thietke:
+	table =  'thietke'
+	tableName = 'Thiết Kế'
+
+	colData = {}
+	sqlSyntax =  {
+			'hoten_cn': 'Họ và tên',
+			'stt_ctr': 'STT',
+			'thu_lao': 'Thù Lao',
+	}
+
+	@classmethod
+	def formsField(cls):
+		return {
+			'arribute': ['Họ và tên', 'Tên Công Trình', 'Thù Lao'],
+		}
+
+	@classmethod
+	def saveToDatabase(cls, values, edit=False):
+		args = ()
+
+		tenkts 		= values.get('Họ và tên')
+		namsinhkts  = values.get('Năm sinh')
+		phai		= values.get('Phái')
+		noitn   	= values.get('Nơi tốt nghiệp')
+		dchi 		= values.get('Địa chỉ')
+
+		if not phai.isdigit():
+			raise Exception('Wrong Format or Data Type in Field Năm sinh')
+		
+		conn = ConnectionToMySQl()
+		args = (tenkts, namsinhkts, phai, noitn, dchi)
+
+		if edit:
+			oldPk = values.get('oldPk')
+			args = (oldPk, *args)
+			conn.cursor.callproc('updateKtrucsu', args)
+
+		else:
+			conn.cursor.callproc('insertIntoKtrucsu', args)
+		conn.connection.commit()
+
+		return True
+
+	def __init__(self, tenkts, sttctr, thu_lao):
+		self.tenkts = tenkts
+		self.stt_ctr = sttctr
+		self.thulao = thu_lao
 
 # Congtrinh.createAnObj()
 # print(Congtrinh.createAnObj())

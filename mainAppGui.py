@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 
 from mysqlConnection import ConnectionToMySQl
 from tableGUI import TableGUI
@@ -51,7 +52,7 @@ class Application():
 
 		self.exitBtn = tk.Button(
 					self.navFrame, text='Thoat', bg='black', fg='white', 
-					command= lambda : self.root.destroy()
+					command = self.exit
 					)
 		self.exitBtn.place(relx=0.01, rely=0.9, relwidth=0.8, relheight=0.075)
 
@@ -75,6 +76,12 @@ class Application():
 		newTable.configColumns(newTableModel.colData)
 
 		self.table = newTable
+
+	def exit(self):
+		msg = messagebox.askokcancel('Exit?', 'Do you want to exit the app?')
+		
+		if msg:
+			self.root.destroy()
 
 
 
