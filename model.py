@@ -70,10 +70,6 @@ class Congtrinh:
 				'Tên Chủ': Chunhan, 
 				'Tên Thầu': Chuthau,
 			},
-			'manyToMany': {
-				'Công Nhân': Congnhan,
-				'Kiến Trúc Sư': Ktrucsu
-			}
 		}
 
 	@classmethod
@@ -483,6 +479,42 @@ class Thamgia:
 			'arribute': ['Họ và tên', 'Tên Công Trình', 'Ngày tham gia', 'Số ngày'],
 		}
 	
+	@classmethod
+	def saveToDatabase(cls, values, edit=False):
+		try:
+			values[2] = datetime.strptime(values[2], '%Y-%m-%d').date()
+			values[3] = int(values[3])
+
+		except Exception as e:
+			raise Exception('Wrong Format or Data Type in Field Ngày tham gia or Số ngày')
+
+		conn = ConnectionToMySQl()
+
+		if type(values[1]) is not int:
+			rs = conn.getQueryset(f"select stt_ctr from cgtrinh where ten_ctr='{values[1]}'")
+			values[1] = rs[0][0]
+
+		args = tuple(values)
+		if edit:
+			conn.cursor.callproc('suaThongTinCongNhanLamViec', args)
+
+		else:
+			conn.cursor.callproc('themCongNhanLamViec', args)
+
+		conn.connection.commit()
+
+	@classmethod
+	def deleteFromDB(cls, values):
+		conn = ConnectionToMySQl()
+
+		if type(values[1]) is not int:
+			rs = conn.getQueryset(f"select stt_ctr from cgtrinh where ten_ctr='{values[1]}'")
+			values[1] = rs[0][0]
+
+		args = tuple(values)
+		conn.cursor.callproc('xoaCongNhanLamViec', args)
+		conn.connection.commit()
+	
 
 	def __init__(self, hotenCn, sttctr, ngayTG, soNgay):
 		self.hoten_cn = hotenCn
@@ -509,31 +541,39 @@ class Thietke:
 
 	@classmethod
 	def saveToDatabase(cls, values, edit=False):
-		args = ()
+		try:
+			values[2] = int(values[2])
 
-		tenkts 		= values.get('Họ và tên')
-		namsinhkts  = values.get('Năm sinh')
-		phai		= values.get('Phái')
-		noitn   	= values.get('Nơi tốt nghiệp')
-		dchi 		= values.get('Địa chỉ')
+		except Exception as e:
+			raise Exception('Wrong Format or Data Type in Field Thù Lao')
 
-		if not phai.isdigit():
-			raise Exception('Wrong Format or Data Type in Field Năm sinh')
-		
 		conn = ConnectionToMySQl()
-		args = (tenkts, namsinhkts, phai, noitn, dchi)
 
+		if type(values[1]) is not int:
+			rs = conn.getQueryset(f"select stt_ctr from cgtrinh where ten_ctr='{values[1]}'")
+			values[1] = rs[0][0]
+
+		args = tuple(values)
 		if edit:
-			oldPk = values.get('oldPk')
-			args = (oldPk, *args)
-			conn.cursor.callproc('updateKtrucsu', args)
+			conn.cursor.callproc('suaThongTinKTSLamViec', args)
 
 		else:
-			conn.cursor.callproc('insertIntoKtrucsu', args)
+			conn.cursor.callproc('themKTSLamViec', args)
+
 		conn.connection.commit()
 
-		return True
+	@classmethod
+	def deleteFromDB(cls, values):
+		conn = ConnectionToMySQl()
 
+		if type(values[1]) is not int:
+			rs = conn.getQueryset(f"select stt_ctr from cgtrinh where ten_ctr='{values[1]}'")
+			values[1] = rs[0][0]
+
+		args = tuple(values)
+		conn.cursor.callproc('xoaKTSLamViec', args)
+		conn.connection.commit()
+	
 	def __init__(self, tenkts, sttctr, thu_lao):
 		self.tenkts = tenkts
 		self.stt_ctr = sttctr

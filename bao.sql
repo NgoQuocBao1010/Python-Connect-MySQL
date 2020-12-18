@@ -320,7 +320,50 @@ create procedure getTenCongTrinhTuCongNhan(hotencn varchar(50))
         where tg.hoten_cn=hotencn;
 	End //
 DELIMITER ;
-call getTenCongTrinhTuCongNhan('nguyen thi suu');
+-- call getTenCongTrinhTuCongNhan('nguyen thi suu');
+
+
+DELIMITER //
+create procedure themCongNhanLamViec(hotencn varchar(50), sttCtr int, ngayTg date, songay int)
+	Begin
+		insert into thamgia values (hotencn, sttCtr, ngayTg, songay);
+	End //
+DELIMITER ;
+call themCongNhanLamViec('nguyen thi suu', 5, '1994-12-18', 30);
+
+
+
+DELIMITER //
+create procedure suaThongTinCongNhanLamViec(hotencn varchar(50), sttCtr int, ngayTg date, songay int)
+	Begin
+		update thamgia set so_ngay=songay, ngay_tgia=ngayTg
+        where hoten_cn=hotencn and stt_ctr=sttCtr;
+	End //
+DELIMITER ;
+call suaThongTinCongNhanLamViec('nguyen thi suu', 5, '1994-12-18', 30);
+
+
+
+DELIMITER //
+create procedure xoaCongNhanLamViec(hotencn varchar(50), sttCtr int)
+	Begin
+		delete from thamgia 
+        where hoten_cn=hotencn and stt_ctr=sttCtr;
+	End //
+DELIMITER ;
+-- call xoaCongNhanLamViec('nguyen thi suu', 5);
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -338,6 +381,40 @@ create procedure getTenCongTrinhTuKTS(hotenkts varchar(50))
 	End //
 DELIMITER ;
 call getTenCongTrinhTuKTS('le thanh tung');
+
+
+DELIMITER //
+create procedure themKTSLamViec(hotenkts varchar(50), sttCtr int, thulao int)
+	Begin
+		insert into thietke values (hotenkts, sttCtr, thulao);
+	End //
+DELIMITER ;
+-- call themKTSLamViec('truong minh thai', 7, 30);
+
+
+
+DELIMITER //
+create procedure suaThongTinKTSLamViec(hotenkts varchar(50), sttCtr int, thulao int)
+	Begin
+		update thietke set thu_lao=thulao
+        where hoten_kts=hotenkts and stt_ctr=sttCtr;
+	End //
+DELIMITER ;
+-- call suaThongTinKTSLamViec('truong minh thai', 7, 13);
+
+
+
+DELIMITER //
+create procedure xoaKTSLamViec(hotenkts varchar(50), sttCtr int)
+	Begin
+		delete from thietke 
+        where hoten_kts=hotenkts and stt_ctr=sttCtr;
+	End //
+DELIMITER ;
+-- call xoaKTSLamViec('truong minh thai', 7); 
+
+
+
 
 
 

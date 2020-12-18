@@ -21,6 +21,8 @@ def checkList(tableModel, objectKey):
 	def getChecked():
 		values = []
 		dValues = []
+		uValues = []
+
 		for rowId in table.get_children():
 			row = table.item(rowId)
 			itemsTag = row['tags'][0]
@@ -31,9 +33,18 @@ def checkList(tableModel, objectKey):
 		for v in prefillValues:
 			if v[0] not in values:
 				dValues.append(v[0])
+			
+			if v[0] in values:
+				uValues.append(v[0])
 		
-		print(values)
-		print(dValues)
+		# print(values)
+		# print(dValues)
+		# print(uValues)
+
+		if len(values) == 0:
+			root.destroy()
+			return
+
 		if type(objectKey) is Congtrinh:
 			values = [values, objectKey]
 
@@ -41,7 +52,7 @@ def checkList(tableModel, objectKey):
 			values = [objectKey, values]
 
 		root.destroy()
-		scrollFrame(values, dValues, tModel)
+		scrollFrame(values, uValues, dValues, tModel)
 
 
 
@@ -139,6 +150,6 @@ ty = {
 obj3 = Ktrucsu(*ty.values())
 
 
-# checkList(Congtrinh, objectKey=obj2)
-# checkList(Congnhan, objectKey=obj)
-checkList(Congtrinh, objectKey=obj3)
+# checkList(Congtrinh, 	objectKey=obj2)
+# checkList(Congnhan, 	objectKey=obj)
+# checkList(Congtrinh, 	objectKey=obj3)

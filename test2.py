@@ -1,21 +1,43 @@
 from tkinter import *
+from tkinter import messagebox
 from tkinter import ttk
 
 
-def scrollFrame(values, dValues, tableModel):
-	# print(values, tableModel.table)
-
+def scrollFrame(values, uValues, dValues, tableModel):
 	def save():
-		values = {}
+		inputValues = {}
 
 		for key, item in fDict.items():
 			inputDictGet = {}
 			for field, inputF in item.items():
-				inputDictGet.setdefault(field, inputF.get())
-			values.setdefault(key, inputDictGet)
+				inputData = inputF.get()
+
+				if len(inputData) == 0:
+					messagebox.showerror('Missing Form', 'Please fill all the forms')
+					return
+				
+				inputDictGet.setdefault(field, inputData)
+			inputValues.setdefault(key, inputDictGet)
 		
 		print(obj.getPk())
-		print(values)
+		
+		try: 
+			for i in dValues:
+				print(f'Delete {i}')
+				args = [obj.getPk(), i]
+				tableModel.deleteFromDB(args)
+			
+			for i in data:
+				fieldValue = list(inputValues.get(i).values())
+				args = [obj.getPk(), i, *fieldValue]
+				if i in uValues:
+					print(f'Update {i}', f'with data is {fieldValue}')
+					tableModel.saveToDatabase(args, edit=True)
+				else:
+					print(f'Add {i}', f'with data is {fieldValue}')
+					tableModel.saveToDatabase(args)
+		except Exception as e:
+			messagebox.showerror('Invalid Input', str(e))
 
 
 	root = Tk()
