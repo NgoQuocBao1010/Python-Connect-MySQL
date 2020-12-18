@@ -354,7 +354,22 @@ class Congnhan:
 		self.namsinhcn = namsinhcn
 		self.namvaonghe = namvaonghe
 		self.chuyenmon = chuyenmon
+	
+	def getCongTrinh(self):
+		conn = ConnectionToMySQl()
+		args = (self.hotencn, )
+		# args = ('nguyen thi suu', )
+		conn.cursor.callproc('getTenCongTrinhTuCongNhan', args)
+		rs = conn.cursor.stored_results()
 
+		for row in rs:
+			data = row.fetchall()
+
+		return data
+	
+	def getPk(self):
+		return self.hotencn
+	
 	def __str__(self):
 		return self.hotencn
 
@@ -362,7 +377,7 @@ class Congnhan:
 class Ktrucsu:
 	table =  'ktrucsu'
 	tableName = 'Kiến Trúc Sư'
-	imptField = pk='hoten_kts'
+	imptField = pk ='hoten_kts'
 	colData = {}
 	sqlSyntax =  {
 			'hoten_kts': 'Họ và tên',
@@ -431,6 +446,21 @@ class Ktrucsu:
 		self.noitn = noitn
 		self.diachi_ll_kts = diachi_ll_kts
 
+	def getCongTrinh(self):
+		conn = ConnectionToMySQl()
+		args = (self.hotenkts, )
+		# args = ('nguyen thi suu', )
+		conn.cursor.callproc('getTenCongTrinhTuKTS', args)
+		rs = conn.cursor.stored_results()
+
+		for row in rs:
+			data = row.fetchall()
+
+		return data
+
+	def getPk(self):
+		return self.hotenkts
+
 	def __str__(self):
 		return self.hotenkts
 
@@ -452,6 +482,7 @@ class Thamgia:
 		return {
 			'arribute': ['Họ và tên', 'Tên Công Trình', 'Ngày tham gia', 'Số ngày'],
 		}
+	
 
 	def __init__(self, hotenCn, sttctr, ngayTG, soNgay):
 		self.hoten_cn = hotenCn

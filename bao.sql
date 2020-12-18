@@ -310,6 +310,45 @@ DELIMITER ;
 
 
 
+-- Bang Tham gia
+DELIMITER //
+create procedure getTenCongTrinhTuCongNhan(hotencn varchar(50))
+	Begin
+		select ten_ctr 
+        from cgtrinh c inner join thamgia tg 
+        on c.stt_ctr=tg.stt_ctr
+        where tg.hoten_cn=hotencn;
+	End //
+DELIMITER ;
+call getTenCongTrinhTuCongNhan('nguyen thi suu');
+
+
+
+
+
+
+-- Bang Thiet Ke
+DELIMITER //
+create procedure getTenCongTrinhTuKTS(hotenkts varchar(50))
+	Begin
+		select ten_ctr 
+        from cgtrinh c inner join thietke tk
+        on c.stt_ctr=tk.stt_ctr
+        where tk.hoten_kts=hotenkts;
+	End //
+DELIMITER ;
+call getTenCongTrinhTuKTS('le thanh tung');
+
+
+
+
+
+
+
+
+
+
+
 
 
 

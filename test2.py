@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import ttk
 
 
-def scrollFrame(values, tableModel):
+def scrollFrame(values, dValues, tableModel):
 	# print(values, tableModel.table)
 
 	def save():
@@ -14,6 +14,7 @@ def scrollFrame(values, tableModel):
 				inputDictGet.setdefault(field, inputF.get())
 			values.setdefault(key, inputDictGet)
 		
+		print(obj.getPk())
 		print(values)
 
 
@@ -46,9 +47,10 @@ def scrollFrame(values, tableModel):
 	fields = list(tableModel.formsField().get('arribute'))
 	
 	data = values[0] if type(values[0]) is list else values[1]
+	obj = values[1] if type(values[0]) is list else values[0]
 	startField = 0 if type(values[0]) is list else 1
 
-	textLb = 'Điền thông tin cho'
+	textLb = 'Điền thông tin cho ' + str(obj)
 	Label(second_frame, text=textLb, bg='gray').grid(
 		row=0, 
 		column=0, 

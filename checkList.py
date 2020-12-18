@@ -20,13 +20,20 @@ def checkList(tableModel, objectKey):
 
 	def getChecked():
 		values = []
+		dValues = []
 		for rowId in table.get_children():
 			row = table.item(rowId)
 			itemsTag = row['tags'][0]
 
 			if itemsTag == 'checked':
 				values.append(row['values'][0])
-
+		
+		for v in prefillValues:
+			if v[0] not in values:
+				dValues.append(v[0])
+		
+		print(values)
+		print(dValues)
 		if type(objectKey) is Congtrinh:
 			values = [values, objectKey]
 
@@ -34,7 +41,7 @@ def checkList(tableModel, objectKey):
 			values = [objectKey, values]
 
 		root.destroy()
-		scrollFrame(values, tModel)
+		scrollFrame(values, dValues, tModel)
 
 
 
@@ -52,7 +59,8 @@ def checkList(tableModel, objectKey):
 
 	else:
 		tModel = Thamgia if type(objectKey) is Congnhan else Thietke
-		# data = mysqlConn.getQueryset(f'select {field} from {tModel.table}')
+		prefillValues = objectKey.getCongTrinh()
+		
 
 
 	textLb = 'Chọn ' + modelName + ' cho ' + objectKey.tableName + ' ' + str(objectKey)
@@ -88,7 +96,8 @@ def checkList(tableModel, objectKey):
 	rows = mysqlConn.getQueryset(f'select {field} from {model}')
 
 	for data in rows:
-		table.insert("", "end", values=data, tags='unchecked')
+		tags = 'checked' if data in prefillValues else 'unchecked'
+		table.insert("", "end", values=data, tags=tags)
 
 
 	table.bind('<Button 1>', test)
@@ -120,12 +129,11 @@ a = {
 obj2 = Congnhan(*a.values())
 
 ty = {
-	'Họ và tên': 'nguyen thi anh thu', 
-	'Năm sinh': 1970, 
-	'Phái': 0, 
-	'Nơi tốt nghiệp': 
-	'new orlean usa', 
-	'Địa chỉ': 'khu i dhct tp can tho'
+	'Họ và tên': 'le thanh tung', 
+	'Năm sinh': 1956, 
+	'Phái': 1, 
+	'Nơi tốt nghiệp': 'tp hcm', 
+	'Địa chỉ': '25 duong 3/2 tp bien hoa'
 	}
 
 obj3 = Ktrucsu(*ty.values())
@@ -133,4 +141,4 @@ obj3 = Ktrucsu(*ty.values())
 
 # checkList(Congtrinh, objectKey=obj2)
 # checkList(Congnhan, objectKey=obj)
-# checkList(Congtrinh, objectKey=obj3)
+checkList(Congtrinh, objectKey=obj3)
