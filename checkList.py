@@ -57,6 +57,7 @@ def checkList(tableModel, objectKey):
 
 
 	root = tk.Tk()
+	root.title('Check list')
 	root.geometry('1000x400')
 
 	mysqlConn = ConnectionToMySQl()
@@ -67,7 +68,7 @@ def checkList(tableModel, objectKey):
 
 	if type(objectKey) is Congtrinh:
 		tModel = Thamgia if model == 'congnhan' else Thietke
-
+		prefillValues = objectKey.getCongNhan() if model == 'congnhan' else objectKey.getKienTrucSu()
 	else:
 		tModel = Thamgia if type(objectKey) is Congnhan else Thietke
 		prefillValues = objectKey.getCongTrinh()

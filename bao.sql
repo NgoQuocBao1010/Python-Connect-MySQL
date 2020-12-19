@@ -323,6 +323,17 @@ DELIMITER ;
 -- call getTenCongTrinhTuCongNhan('nguyen thi suu');
 
 
+
+DELIMITER //
+create procedure getCongNhanTuCTrinh(sttctr varchar(50))
+	Begin
+		select hoten_cn from thamgia
+        where stt_ctr=sttctr;
+	End //
+DELIMITER ;
+call getCongNhanTuCTrinh(3);
+
+
 DELIMITER //
 create procedure themCongNhanLamViec(hotencn varchar(50), sttCtr int, ngayTg date, songay int)
 	Begin
@@ -380,7 +391,17 @@ create procedure getTenCongTrinhTuKTS(hotenkts varchar(50))
         where tk.hoten_kts=hotenkts;
 	End //
 DELIMITER ;
-call getTenCongTrinhTuKTS('le thanh tung');
+-- call getTenCongTrinhTuKTS('le thanh tung');
+
+
+DELIMITER //
+create procedure getKTSTuCTrinh(sttctr int)
+	Begin
+		select hoten_kts from thietke
+        where stt_ctr = sttctr;
+	End //
+DELIMITER ;
+call getKTSTuCTrinh(1);
 
 
 DELIMITER //

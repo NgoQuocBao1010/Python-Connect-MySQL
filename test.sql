@@ -1,4 +1,5 @@
 use project;
+select stt_ctr from thamgia where hoten_cn='le quyet thang';
 
 DELETE FROM cgtrinh WHERE stt_ctr=9;
 DELETE FROM chuthau WHERE tel='123';

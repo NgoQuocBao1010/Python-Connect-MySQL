@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
-
+from model import *
 
 def scrollFrame(values, uValues, dValues, tableModel):
 	def save():
@@ -24,12 +24,16 @@ def scrollFrame(values, uValues, dValues, tableModel):
 		try: 
 			for i in dValues:
 				print(f'Delete {i}')
-				args = [obj.getPk(), i]
+				args = [obj.getPk(), i] if type(obj) is not Congtrinh else [i, obj.getPk()]
 				tableModel.deleteFromDB(args)
 			
 			for i in data:
 				fieldValue = list(inputValues.get(i).values())
-				args = [obj.getPk(), i, *fieldValue]
+				if type(obj) is not Congtrinh:
+					args = [obj.getPk(), i, *fieldValue]
+				else:
+					args = [i, obj.getPk(), *fieldValue]
+				
 				if i in uValues:
 					print(f'Update {i}', f'with data is {fieldValue}')
 					tableModel.saveToDatabase(args, edit=True)
@@ -38,10 +42,12 @@ def scrollFrame(values, uValues, dValues, tableModel):
 					tableModel.saveToDatabase(args)
 		except Exception as e:
 			messagebox.showerror('Invalid Input', str(e))
+		
+		root.destroy()
 
 
 	root = Tk()
-	root.title('Learn To Code at Codemy.com')
+	root.title('Info')
 	root.geometry("1000x400")
 
 	# Create A Main Frame

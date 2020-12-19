@@ -4,7 +4,7 @@ from tkinter import messagebox
 
 from mysqlConnection import ConnectionToMySQl
 from checkList import *
-import model
+from model import *
 
 TITLE_FONT = ("Comic Sans MS", 25, "bold")
 LABEL_FONT = ("Times New Roman", 14)
@@ -42,17 +42,6 @@ class Form():
 			form.createGUI()
 
 
-	@classmethod
-	def createForm(cls, tableModel, values={}):
-		root = tk.Tk()
-		root.title('My Application')
-		root.geometry('1400x600')
-
-		form = Form(root, tableModel, values)
-		form.createGUI()
-
-
-		root.mainloop()	
 
 	def __init__(self, window, tableModel, app=None, edit=False, pFormInfo=None, values={}):
 		self.window = window
@@ -120,10 +109,6 @@ class Form():
 			)
 
 			lbRely += 0.3
-
-
-		manyToManyField = self.tableModel.formsField().get("manyToMany").keys()
-
 		
 
 		submitBtn = tk.Button(
@@ -147,6 +132,8 @@ class Form():
 
 			if self.pFormInfo is not None:
 				self.pFormInfo[1][field] = entry
+		
+		self.obj = self.tableModel.createObject(values)
 
 		if self.edit:
 			for field, data in self.values.items():
@@ -169,7 +156,7 @@ class Form():
 		except Exception as e:
 			messagebox.showerror('Error!!!', str(e))
 
-
+	# prefill all the forms for edit data
 	def preFill(self):
 		if len(self.values) != 0:
 			for field in self.fieldInputs.keys():
@@ -181,15 +168,44 @@ class Form():
 			oldData = self.values.get(oldPk)
 			self.values.setdefault('oldPk', oldData)
 
+	# Return button 
 	def back(self):
 		self.contentFrame.destroy()
+		print('Yes')
 
+		ty = {
+			'Họ và tên': 'le thanh tung', 
+			'Năm sinh': 1956, 
+			'Phái': 1, 
+			'Nơi tốt nghiệp': 'tp hcm', 
+			'Địa chỉ': '25 duong 3/2 tp bien hoa'
+			}
+
+		obj3 = Ktrucsu(*ty.values())
+		if self.tableModel is Congtrinh:
+				msg = messagebox.askokcancel(
+					'Them Cong Nhan', 
+					'Ban co muon them thong tin cong nhan lam viec?'
+					)
+				
+				if msg:
+					checkList(Congnhan, objectKey=obj3)
+
+		# prefill previous form if there is one
 		if self.pFormInfo is not None:
 			form = self.pFormInfo[0]
 			form.values = self.pFormInfo[1]
-			print(form.values)
 			form.createGUI()
 
 
-# val = {'Tên Công Trình': 'cxcxzczxc', 'Địa Chỉ': 'dasda', 'Tỉnh Thành': 'dasdas', 'Kinh Phí (triệu đồng)': 'asdasd', 'Ngày Bắt Đầu': 'asdasd', 'Tên Chủ': 'dai hoc can tho', 'Tên Thầu': 'cty xd so 6'}
-# Form.createForm(model.Chunhan)
+
+ty = {
+	'Họ và tên': 'le thanh tung', 
+	'Năm sinh': 1956, 
+	'Phái': 1, 
+	'Nơi tốt nghiệp': 'tp hcm', 
+	'Địa chỉ': '25 duong 3/2 tp bien hoa'
+	}
+
+obj3 = Ktrucsu(*ty.values())
+# checkList(Congtrinh, 	objectKey=obj3)

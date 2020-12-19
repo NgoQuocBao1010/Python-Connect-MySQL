@@ -53,10 +53,18 @@ class Congtrinh:
 	}
 
 	@classmethod
-	def createAnObj(cls, condition=()):
-		x = ConnectionToMySQl()
-		rs = x.getObject(cls.table, condition)
-		obj = dict(zip(list(cls.sqlSyntax.values()), rs))
+	def createObject(cls, values):
+		idCtr 		= values.get('STT')
+		tenctr 		= values.get('Tên Công Trình')
+		dchi   		= values.get('Địa Chỉ')
+		tthanh   	= values.get('Tỉnh Thành')
+		kphi   		= values.get('Kinh Phí')
+		ngaybd   	= values.get('Ngày Bắt Đầu')
+		tenChu 		= values.get('Tên Chủ')
+		tenThau 	= values.get('Tên Thầu')
+
+		args = (idCtr, tenctr, dchi, tthanh, kphi, ngaybd, tenChu, tenThau)
+		obj = Congtrinh(*args)
 		return obj
 
 	@classmethod
@@ -95,7 +103,6 @@ class Congtrinh:
 		args = (idCtr, tenctr, dchi, tthanh, kphi, tenChu, tenThau, ngaybd)
 
 		if edit:
-			print(args)
 			conn.cursor.callproc('updateCgtrinh', args)
 		else:
 			conn.cursor.callproc('insertIntoCgtrinh', args)
@@ -128,27 +135,33 @@ class Congtrinh:
 		self.tenchu = tenchu
 		self.tenthau = tenthau
 		self.ngaybatdau = ngaybatdau
+	
+	def getPk(self):
+		return self.stt
 
-
-	def getArchitects(self):
-		self.architects = []
+	def getKienTrucSu(self):
 		conn = ConnectionToMySQl()
-		statement = f'select k.* from ktrucsu k join thietke t on k.hoten_kts=t.hoten_kts where stt_ctr = {self.stt}'
-		rs = conn.getQueryset(statement)
-		
-		for rset in rs:
-			arct = Ktrucsu(*rset)
-			self.architects.append(arct)
+		args = (self.stt, )
+		# args = ('nguyen thi suu', )
+		conn.cursor.callproc('getKTSTuCTrinh', args)
+		rs = conn.cursor.stored_results()
 
-	def getEngineers(self):
-		self.engineers = []
+		for row in rs:
+			data = row.fetchall()
+
+		return data
+
+	def getCongNhan(self):
 		conn = ConnectionToMySQl()
-		statement = f'select c.* from congnhan c join thamgia t on c.hoten_cn=t.hoten_cn where stt_ctr={self.stt}'
-		rs = conn.getQueryset(statement)
-		
-		for rset in rs:
-			eng = Congnhan(*rset)
-			self.engineers.append(eng)
+		args = (self.stt, )
+		# args = ('nguyen thi suu', )
+		conn.cursor.callproc('getCongNhanTuCTrinh', args)
+		rs = conn.cursor.stored_results()
+
+		for row in rs:
+			data = row.fetchall()
+
+		return data
 
 
 	def __str__(self):
@@ -441,6 +454,7 @@ class Ktrucsu:
 		self.phai = phai
 		self.noitn = noitn
 		self.diachi_ll_kts = diachi_ll_kts
+	
 
 	def getCongTrinh(self):
 		conn = ConnectionToMySQl()
