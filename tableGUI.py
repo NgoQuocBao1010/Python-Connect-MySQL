@@ -4,6 +4,7 @@ from tkinter import messagebox
 
 from mysqlConnection import ConnectionToMySQl
 from formsGui import Form
+from detailGUI import Details
 from model import *
 
 
@@ -74,10 +75,10 @@ class TableGUI():
 			self.trv.insert('', 'end', values=data)
 
 	def createGUI(self):
-		self.tableFrame.place(relx=0.05, rely=0.05, relwidth=0.95, relheight=0.5)
-		self.searchFrame.place(relx=0.05, rely=0.57, relwidth=1, relheight=0.3)
+		self.tableFrame.place(relx=0, rely=0, relwidth=1, relheight=0.5)
+		self.searchFrame.place(relx=0, rely=0.57, relwidth=1, relheight=0.3)
 
-		self.trv.pack(side='top', padx=2)
+		self.trv.pack(side='left')
 
 		self.vsb.place(relx=0.97, rely=0, relwidth=0.02, relheight=0.7)
 		self.trv.configure(yscrollcommand=self.vsb.set)
@@ -141,7 +142,7 @@ class TableGUI():
 	def deleteData(self):
 		selected = self.trv.focus()
 		if len(selected) == 0:
-			messagebox.showwarning('Warning', 'Please choose a item you want to edit!')
+			messagebox.showwarning('Warning', 'Please choose a item you want to delete!')
 			return
 
 		selectedVal = self.trv.item(selected)['values']
@@ -152,16 +153,19 @@ class TableGUI():
 			self.app.changeTableView(self.model)
 
 
-
-
 	def bindings(self):
-		self.trv.bind("<Double-1>", self.getFocusRow)
+		self.trv.bind("<Double-1>", self.toDetail)
 
-	def getFocusRow(self, event):
+	def toDetail(self, event):
 		selected = self.trv.focus()
+		if len(selected) == 0:
+			messagebox.showwarning('Warning', 'Please choose a item you want to view!')
+			return
+		
 		selectedVal = self.trv.item(selected)['values']
 		obj = dict(zip(self.model.sqlSyntax.values(), selectedVal))
-		print(obj)
+		detail = Details(self.window, self.model, obj)
+		detail.createGui()
 
 
 

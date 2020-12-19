@@ -1,8 +1,3 @@
-
-a = 1
-
-
-
-b = True if a % 2 == 0 else False
-
-print(b)
+from tkinter import Tk, font
+root = Tk()
+print(font.families())

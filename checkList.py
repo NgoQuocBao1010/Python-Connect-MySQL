@@ -3,7 +3,7 @@ from tkinter import ttk
 from PIL import ImageTk
 import  PIL.Image
 
-from test2 import *
+from multipleForm import *
 from model import *
 from mysqlConnection import ConnectionToMySQl
 
@@ -96,7 +96,6 @@ def checkList(tableModel, objectKey):
 
 	style = ttk.Style(table)
 	style.configure('Treeview', rowheight=30)
-	# style.map('Treeview', background=[('selected', '#BFBFBF')])
 
 	table.tag_configure('checked', image=imgChecked)
 	table.tag_configure('unchecked', image=imgUnchecked)

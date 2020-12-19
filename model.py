@@ -53,21 +53,6 @@ class Congtrinh:
 	}
 
 	@classmethod
-	def createObject(cls, values):
-		idCtr 		= values.get('STT')
-		tenctr 		= values.get('Tên Công Trình')
-		dchi   		= values.get('Địa Chỉ')
-		tthanh   	= values.get('Tỉnh Thành')
-		kphi   		= values.get('Kinh Phí')
-		ngaybd   	= values.get('Ngày Bắt Đầu')
-		tenChu 		= values.get('Tên Chủ')
-		tenThau 	= values.get('Tên Thầu')
-
-		args = (idCtr, tenctr, dchi, tthanh, kphi, ngaybd, tenChu, tenThau)
-		obj = Congtrinh(*args)
-		return obj
-
-	@classmethod
 	def formsField(cls):
 		return {
 			'arribute': ['Tên Công Trình', 'Địa Chỉ', 
@@ -78,6 +63,7 @@ class Congtrinh:
 				'Tên Chủ': Chunhan, 
 				'Tên Thầu': Chuthau,
 			},
+			'manyToMany': [Congnhan, Ktrucsu],
 		}
 
 	@classmethod
@@ -101,6 +87,7 @@ class Congtrinh:
 
 		
 		args = (idCtr, tenctr, dchi, tthanh, kphi, tenChu, tenThau, ngaybd)
+		obj = Congtrinh(*args)
 
 		if edit:
 			conn.cursor.callproc('updateCgtrinh', args)
@@ -109,7 +96,7 @@ class Congtrinh:
 
 		conn.connection.commit()
 
-		return True
+		return obj
 
 	@classmethod
 	def deleteFromDb(cls, values):
@@ -312,7 +299,8 @@ class Congnhan:
 		return {
 			'arribute': ['Họ và tên', 'Năm sinh', 'Năm vào nghề', 'Chuyên môn'],
 			'forgeinKey': {
-			}
+			},
+			'manyToMany': [Congtrinh],
 	}
 
 	@classmethod
@@ -330,6 +318,7 @@ class Congnhan:
 
 		conn = ConnectionToMySQl()
 		args = (tenCn, namsinhcn, namvaonghe, chuyenmon)
+		obj = cls(*args)
 
 		if edit:
 			oldPk = values.get('oldPk')
@@ -341,7 +330,7 @@ class Congnhan:
 
 		conn.connection.commit()
 
-		return True
+		return obj
 
 	@classmethod
 	def deleteFromDb(cls, values):
@@ -401,7 +390,8 @@ class Ktrucsu:
 		return {
 			'arribute': ['Họ và tên', 'Năm sinh', 'Phái', 'Nơi tốt nghiệp', 'Địa chỉ'],
 			'forgeinKey': {
-			}
+			},
+			'manyToMany': [Congtrinh],
 	}
 
 	@classmethod
@@ -419,7 +409,8 @@ class Ktrucsu:
 		
 		conn = ConnectionToMySQl()
 		args = (tenkts, namsinhkts, phai, noitn, dchi)
-
+		
+		obj = cls(*args)
 		if edit:
 			oldPk = values.get('oldPk')
 			args = (oldPk, *args)
@@ -429,7 +420,7 @@ class Ktrucsu:
 			conn.cursor.callproc('insertIntoKtrucsu', args)
 		conn.connection.commit()
 
-		return True
+		return obj
 
 	@classmethod
 	def deleteFromDb(cls, values):

@@ -19,7 +19,7 @@ class Application():
 	def __init__(self):
 		self.root = tk.Tk()
 		self.root.title('My Application')
-		self.root.geometry('1400x600')
+		self.root.geometry('1200x600')
 
 		self.navFrame = tk.Frame(self.root, bg='brown')
 		self.navFrame.place(relx=0, rely=0, relwidth=0.1, relheight=1)
@@ -56,7 +56,7 @@ class Application():
 					)
 		self.exitBtn.place(relx=0.01, rely=0.9, relwidth=0.8, relheight=0.075)
 
-		self.contentFrame = tk.Frame(self.root)
+		self.contentFrame = tk.Frame(self.root, bg='yellow')
 		self.contentFrame.place(relx=0.1, rely=0, relwidth=0.9, relheight=1)
 
 		self.table = TableGUI(self.contentFrame, model.Congtrinh, self)
@@ -82,6 +82,10 @@ class Application():
 		
 		if msg:
 			self.root.destroy()
+	
+
+	def reborn(self):
+		self.rebornApp = Application()
 
 
 

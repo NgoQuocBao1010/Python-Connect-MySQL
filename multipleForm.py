@@ -40,10 +40,11 @@ def scrollFrame(values, uValues, dValues, tableModel):
 				else:
 					print(f'Add {i}', f'with data is {fieldValue}')
 					tableModel.saveToDatabase(args)
+			
+			root.destroy()
 		except Exception as e:
 			messagebox.showerror('Invalid Input', str(e))
 		
-		root.destroy()
 
 
 	root = Tk()

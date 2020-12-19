@@ -53,9 +53,9 @@ class TableTkinter():
 			self.table.insert("", 'end', values=row)
 
 
-root = tk.Tk()
-root.geometry('1000x400')
+# root = tk.Tk()
+# root.geometry('1000x400')
 
-table = TableTkinter(root, 0.05, 0.05, 0.9, 0.7)
+# table = TableTkinter(root, 0.05, 0.05, 0.9, 0.7)
 
-root.mainloop()
+# root.mainloop()

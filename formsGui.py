@@ -9,6 +9,7 @@ from model import *
 TITLE_FONT = ("Comic Sans MS", 25, "bold")
 LABEL_FONT = ("Times New Roman", 14)
 
+
 class Form():
 	class funcButton():
 		def __init__(self, canvas, text, root, fModel, tModel, form=None, coordinate=(0, 0, 0, 0)):
@@ -133,7 +134,8 @@ class Form():
 			if self.pFormInfo is not None:
 				self.pFormInfo[1][field] = entry
 		
-		self.obj = self.tableModel.createObject(values)
+		# print(values)
+		# self.obj = self.tableModel.createObject(values)
 
 		if self.edit:
 			for field, data in self.values.items():
@@ -145,7 +147,7 @@ class Form():
 		values = self.getValues()
 
 		try:
-			self.tableModel.saveToDatabase(values, self.edit)
+			self.obj = self.tableModel.saveToDatabase(values, self.edit)
 			messagebox.showinfo('Succesful!!', 'Your Data has been saved!!')
 
 			if self.app is not None:
@@ -171,41 +173,32 @@ class Form():
 	# Return button 
 	def back(self):
 		self.contentFrame.destroy()
-		print('Yes')
 
-		ty = {
-			'Họ và tên': 'le thanh tung', 
-			'Năm sinh': 1956, 
-			'Phái': 1, 
-			'Nơi tốt nghiệp': 'tp hcm', 
-			'Địa chỉ': '25 duong 3/2 tp bien hoa'
-			}
-
-		obj3 = Ktrucsu(*ty.values())
+		# Futher Info
 		if self.tableModel is Congtrinh:
-				msg = messagebox.askokcancel(
-					'Them Cong Nhan', 
-					'Ban co muon them thong tin cong nhan lam viec?'
-					)
+			msg = messagebox.askokcancel(
+				'Them Cong Nhan', 
+				'Ban co muon them thong tin cong nhan lam viec?'
+				)
 				
-				if msg:
-					checkList(Congnhan, objectKey=obj3)
+			if msg:
+				self.app.root.destroy()
+				checkList(Congnhan, self.obj)
+				self.app.reborn()
+		
+		elif self.tableModel is Congnhan or self.tableModel is Ktrucsu:
+			msg = messagebox.askokcancel(
+				'Them Cong Trinh', 
+				'Ban co muon them thong tin cong trinh doi tuong dang lam viec?'
+				)
+				
+			if msg:
+				self.app.root.destroy()
+				checkList(Congtrinh, self.obj)
+				self.app.reborn()
 
 		# prefill previous form if there is one
 		if self.pFormInfo is not None:
 			form = self.pFormInfo[0]
 			form.values = self.pFormInfo[1]
 			form.createGUI()
-
-
-
-ty = {
-	'Họ và tên': 'le thanh tung', 
-	'Năm sinh': 1956, 
-	'Phái': 1, 
-	'Nơi tốt nghiệp': 'tp hcm', 
-	'Địa chỉ': '25 duong 3/2 tp bien hoa'
-	}
-
-obj3 = Ktrucsu(*ty.values())
-# checkList(Congtrinh, 	objectKey=obj3)
