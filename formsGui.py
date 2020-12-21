@@ -6,8 +6,14 @@ from mysqlConnection import ConnectionToMySQl
 from checkList import *
 from model import *
 
+
+# Fonts
 TITLE_FONT = ("Comic Sans MS", 25, "bold")
-LABEL_FONT = ("Times New Roman", 14)
+LABEL_FONT = ("Sitka Banner", 13)
+ENTRY_FONT = ("Sitka Banner", 20)
+
+# Colors
+LABEL_COLOR = 'Blue'
 
 
 class Form():
@@ -42,8 +48,6 @@ class Form():
 			form = Form(self.form.window, self.tModel, pFormInfo=(self.form, values))
 			form.createGUI()
 
-
-
 	def __init__(self, window, tableModel, app=None, edit=False, pFormInfo=None, values={}):
 		self.window = window
 		self.tableModel = tableModel
@@ -54,30 +58,35 @@ class Form():
 		self.contentFrame = tk.Frame(self.window)
 
 	def createGUI(self):
-		self.contentFrame.pack(fill='both', expand='yes', padx=10, pady=10)
-		fieldNames = self.tableModel.formsField().get('arribute')
+		self.contentFrame.pack(fill='both', expand='yes')
+
 		self.fieldInputs = {}
 
+		# Form's Name
 		titleLb = tk.Label(
 			self.contentFrame, 
-			fg='black', text='Thêm ' + 
-			self.tableModel.tableName, 
+			fg='black', 
+			bg=LABEL_COLOR,
+			text='Thêm ' + self.tableModel.tableName, 
 			font=TITLE_FONT
 			)
 		titleLb.place(relx=0.2, rely=0.02, relwidth=0.6, relheight=0.1)
 
+		fieldNames = self.tableModel.formsField().get('arribute')
 		lbRely = 0.2
 		for field in fieldNames:
-			fieldLb = tk.Label(self.contentFrame, fg='black', text=field, font=LABEL_FONT, bg='gray')
-			fieldLb.place(relx=0.02, rely=lbRely, relwidth=0.13, relheight=0.07)
+			fieldLb = tk.Label(self.contentFrame, fg='black', text=field, font=LABEL_FONT, anchor='w')
+			fieldLb.place(relx=0.02, rely=lbRely, relwidth=0.13, relheight=0.035)
 
+			# Var to save input
 			fieldVar = tk.StringVar()
 			fieldVar.set('')
-			fieldEnt = tk.Entry(self.contentFrame, fg='black', textvariable=fieldVar, font=LABEL_FONT)
-			fieldEnt.place(relx=0.16, rely=lbRely, relwidth=0.25, relheight=0.07)
+			fieldEnt = tk.Entry(self.contentFrame, fg='black', textvariable=fieldVar, font=ENTRY_FONT)
+			fieldEnt.place(relx=0.02, rely=lbRely + 0.037, relwidth=0.4, relheight=0.07)
 
 			lbRely += 0.12
 			self.fieldInputs.setdefault(field, fieldVar)
+
 
 		fkFields = self.tableModel.formsField().get("forgeinKey").keys()
 		lbRely = 0.2
@@ -99,6 +108,7 @@ class Form():
 			dropdown = tk.OptionMenu(self.contentFrame, fieldVar, *options)
 			dropdown.place(relx=0.6, rely=lbRely + 0.1, relwidth=0.2, relheight=0.07)
 			self.fieldInputs.setdefault(field, fieldVar)
+
 			btn = self.funcButton(
 				self.contentFrame, 
 				'Them ' + field,
@@ -111,7 +121,7 @@ class Form():
 
 			lbRely += 0.3
 		
-
+		# Submit Button
 		submitBtn = tk.Button(
 						self.contentFrame, 
 						fg='white', text='Save', 
@@ -120,6 +130,7 @@ class Form():
 						)
 		submitBtn.place(relx=0.85, rely=0.8, relwidth=0.1, relheight=0.07)
 
+		# Back btn
 		gobackBtn = tk.Button(self.contentFrame, bg='red', fg='white', text='Back', command=self.back)
 		gobackBtn.place(relx=0, rely=0, relwidth=0.1, relheight=0.07)
 
@@ -133,9 +144,6 @@ class Form():
 
 			if self.pFormInfo is not None:
 				self.pFormInfo[1][field] = entry
-		
-		# print(values)
-		# self.obj = self.tableModel.createObject(values)
 
 		if self.edit:
 			for field, data in self.values.items():
@@ -184,6 +192,14 @@ class Form():
 			if msg:
 				self.app.root.destroy()
 				checkList(Congnhan, self.obj)
+				# msg2 = messagebox.askokcancel(
+				# 	'Them KIen Truc Su',
+				# 	'Ban co muon them thong tin kien truc su lam viec?'
+				# 	)
+				
+				# if msg2:
+				# 	self.app.root.destroy()
+				# 	checkList(Ktrucsu, self.obj)
 				self.app.reborn()
 		
 		elif self.tableModel is Congnhan or self.tableModel is Ktrucsu:
@@ -202,3 +218,11 @@ class Form():
 			form = self.pFormInfo[0]
 			form.values = self.pFormInfo[1]
 			form.createGUI()
+
+
+
+# root = tk.Tk()
+# root.geometry('1200x600')
+# f = Form(root, Congtrinh)
+# f.createGUI()
+# root.mainloop()

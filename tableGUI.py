@@ -23,6 +23,7 @@ class TableGUI():
 		self.window = window
 		self.app = app
 
+		# sql statement runs each time table's created
 		self.defaultStatement = f'select * from {self.model.table}'
 
 		# Label frames to hold component
@@ -33,6 +34,7 @@ class TableGUI():
 		self.trv = ttk.Treeview(self.tableFrame, show="headings", height="7", style="mystyle.Treeview")
 		self.vsb = ttk.Scrollbar(self.tableFrame, orient="vertical", command=self.trv.yview)
 
+		# update data in table
 		self.updateData(self.defaultStatement)
 
 		# Searchbar
@@ -44,13 +46,12 @@ class TableGUI():
 
 		# order by topic
 		self.orderLb = tk.Label(self.searchFrame, bg='black', fg='white', text='Order By')
-		# self.orderLb.place(relx=0.78, rely=0.05, relwidth=0.075, relheight=0.05)
 
 		self.orderByTopic = tk.StringVar()
 		self.orderByTopic.set(self.columnSyntaxs[1])
 		self.orderDropdown = tk.OptionMenu(self.searchFrame, self.orderByTopic, *self.columnSyntaxs)
-		# self.orderDropdown.place(relx=0.85, rely=0.05, relwidth=0.12, relheight=0.05)
 
+		# 
 		self.addBtn = tk.Button(self.searchFrame, fg='red', text='Add', command=self.addData)
 		self.editBtn = tk.Button(self.searchFrame, fg='red', text='Edit', command=self.editData)
 		self.delBtn = tk.Button(self.searchFrame, fg='red', text='Delete', command=self.deleteData)
@@ -58,13 +59,13 @@ class TableGUI():
 
 	# update data from database
 	def updateData(self, statement):
+		# delete old data
 		self.trv.delete(*self.trv.get_children())
 
 		mysqlConn = ConnectionToMySQl()
 		self.rows = mysqlConn.getQueryset(statement)
 
-		# get columns heading
-		# ************ need to clean
+		# insert data into rows
 		self.columnSyntaxs = mysqlConn.cursor.column_names
 
 		self.columns = []
@@ -100,7 +101,6 @@ class TableGUI():
 
 		self.bindings()
 
-
 	def configColumns(self, colData={}):
 		for col in colData.keys():
 			defaultWidth = self.trv.column(1)['width']
@@ -113,7 +113,6 @@ class TableGUI():
 			anchor = newAnchor if newAnchor is not None else defaultAnchor
 
 			self.trv.column(col, width=width, anchor=anchor)
-
 
 	def search(self):
 		searchInput = self.searchInput.get()
@@ -136,6 +135,7 @@ class TableGUI():
 
 		selectedVal = self.trv.item(selected)['values']
 		obj = dict(zip(self.model.sqlSyntax.values(), selectedVal))
+		
 		form = Form(self.window, self.model, app=self.app, edit=True, values=obj)
 		form.createGUI()
 

@@ -1,1 +1,1 @@
-contentFrame
+root.geometry('1200x600')

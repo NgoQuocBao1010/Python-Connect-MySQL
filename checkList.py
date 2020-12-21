@@ -36,10 +36,7 @@ def checkList(tableModel, objectKey):
 			
 			if v[0] in values:
 				uValues.append(v[0])
-		
-		# print(values)
-		# print(dValues)
-		# print(uValues)
+	
 
 		if len(values) == 0:
 			root.destroy()
@@ -53,9 +50,14 @@ def checkList(tableModel, objectKey):
 
 		root.destroy()
 		scrollFrame(values, uValues, dValues, tModel)
+		# checkList(Ktrucsu, objectKey)
 
+	# def on_quit():
+	# 	checkList(Ktrucsu, objectKey)
+	# 	root.destroy()
 
-
+	
+	global root
 	root = tk.Tk()
 	root.title('Check list')
 	root.geometry('1000x400')
@@ -113,41 +115,42 @@ def checkList(tableModel, objectKey):
 
 	table.bind('<Button 1>', test)
 
+	# root.protocol("WM_DELETE_WINDOW", on_quit)
 	root.mainloop()
 
 
-v = {
-	'STT': 8, 
-	'Tên Công Trình': 'nha rieng cua bao', 
-	'Địa Chỉ': 'hung phu', 
-	'Tỉnh Thành': 'ha noi', 
-	'Kinh Phí': 100, 
-	'Tên Chủ': 'quoc bao', 
-	'Tên Thầu': 'tran khai hoan', 
-	'Ngày Bắt Đầu': '1994-09-06'
-}
+# v = {
+# 	'STT': 8, 
+# 	'Tên Công Trình': 'nha rieng cua bao', 
+# 	'Địa Chỉ': 'hung phu', 
+# 	'Tỉnh Thành': 'ha noi', 
+# 	'Kinh Phí': 100, 
+# 	'Tên Chủ': 'quoc bao', 
+# 	'Tên Thầu': 'tran khai hoan', 
+# 	'Ngày Bắt Đầu': '1994-09-06'
+# }
 
-obj = Congtrinh(*v.values())
-# print(type(obj) is Congtrinh)
+# obj = Congtrinh(*v.values())
+# # print(type(obj) is Congtrinh)
 
-a = {
-	'Họ và tên': 'le quyet thang', 
-	'Năm sinh': 54, 
-	'Năm vào nghề': 74, 
-	'Chuyên môn': 'son'
-}
+# a = {
+# 	'Họ và tên': 'le quyet thang', 
+# 	'Năm sinh': 54, 
+# 	'Năm vào nghề': 74, 
+# 	'Chuyên môn': 'son'
+# }
 
-obj2 = Congnhan(*a.values())
+# obj2 = Congnhan(*a.values())
 
-ty = {
-	'Họ và tên': 'le thanh tung', 
-	'Năm sinh': 1956, 
-	'Phái': 1, 
-	'Nơi tốt nghiệp': 'tp hcm', 
-	'Địa chỉ': '25 duong 3/2 tp bien hoa'
-	}
+# ty = {
+# 	'Họ và tên': 'le thanh tung', 
+# 	'Năm sinh': 1956, 
+# 	'Phái': 1, 
+# 	'Nơi tốt nghiệp': 'tp hcm', 
+# 	'Địa chỉ': '25 duong 3/2 tp bien hoa'
+# 	}
 
-obj3 = Ktrucsu(*ty.values())
+# obj3 = Ktrucsu(*ty.values())
 
 
 # checkList(Congtrinh, 	objectKey=obj2)
