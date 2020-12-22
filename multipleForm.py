@@ -1,155 +1,70 @@
 from tkinter import *
-from tkinter import messagebox
 from tkinter import ttk
 from model import *
 
-def scrollFrame(values, uValues, dValues, tableModel):
-	def save():
-		inputValues = {}
 
-		for key, item in fDict.items():
-			inputDictGet = {}
-			for field, inputF in item.items():
-				inputData = inputF.get()
+class MultipleForms():
+	def __init__(self, window, coordinate=(0, 0), fields=[], values={}):
+		self.window = window
+		self.relx, self.rely = coordinate
+		self.fields = fields
+		self.values = values
 
-				if len(inputData) == 0:
-					messagebox.showerror('Missing Form', 'Please fill all the forms')
-					return
-				
-				inputDictGet.setdefault(field, inputData)
-			inputValues.setdefault(key, inputDictGet)
-		
-		print(obj.getPk())
-		
-		try: 
-			for i in dValues:
-				print(f'Delete {i}')
-				args = [obj.getPk(), i] if type(obj) is not Congtrinh else [i, obj.getPk()]
-				tableModel.deleteFromDB(args)
-			
-			for i in data:
-				fieldValue = list(inputValues.get(i).values())
-				if type(obj) is not Congtrinh:
-					args = [obj.getPk(), i, *fieldValue]
-				else:
-					args = [i, obj.getPk(), *fieldValue]
-				
-				if i in uValues:
-					print(f'Update {i}', f'with data is {fieldValue}')
-					tableModel.saveToDatabase(args, edit=True)
-				else:
-					print(f'Add {i}', f'with data is {fieldValue}')
-					tableModel.saveToDatabase(args)
-			
-			root.destroy()
-		except Exception as e:
-			messagebox.showerror('Invalid Input', str(e))
-		
+	def createGui(self):
+		marginx = 0
+		for field in self.fields:
+			Label(
+				self.window,
+				text=field,
+				fg='#3F66DC'
+			).place(relx=self.relx + marginx, rely=self.rely, relwidth=0.1, relheight=0.1)
+
+			Entry(
+				self.window,
+			).place(relx=self.relx + 0.15 + marginx, rely=self.rely, relwidth=0.2, relheight=0.1)
+
+			marginx += 0.32
 
 
-	root = Tk()
-	root.title('Info')
-	root.geometry("1000x400")
+class MultipleFormsFrame():
+	def __init__(self, window, tableModel, savedTable, values={}):
+		self.window = window
+		self.tableModel = tableModel
+		self.savedTable = savedTable
+		self.values = values
 
-	# Create A Main Frame
-	main_frame = Frame(root)
-	main_frame.pack(fill=BOTH, expand=1)
-
-	# Create A Canvas
-	my_canvas = Canvas(main_frame)
-	my_canvas.pack(side=LEFT, fill=BOTH, expand=1)
-
-	# Add A Scrollbar To The Canvas
-	my_scrollbar = ttk.Scrollbar(main_frame, orient=VERTICAL, command=my_canvas.yview)
-	my_scrollbar.pack(side=RIGHT, fill=Y)
-
-	# Configure The Canvas
-	my_canvas.configure(yscrollcommand=my_scrollbar.set)
-	my_canvas.bind('<Configure>', lambda e: my_canvas.configure(scrollregion = my_canvas.bbox("all")))
-
-	# Create ANOTHER Frame INSIDE the Canvas
-	second_frame = Frame(my_canvas)
-
-	# Add that New frame To a Window In The Canvas
-	my_canvas.create_window((0,0), window=second_frame, anchor="nw")
-
-	fields = list(tableModel.formsField().get('arribute'))
+		self.contentFrame = Frame(self.window)
 	
-	data = values[0] if type(values[0]) is list else values[1]
-	obj = values[1] if type(values[0]) is list else values[0]
-	startField = 0 if type(values[0]) is list else 1
+	def createGui(self):
+		self.contentFrame.pack(fill='both', expand='yes')
 
-	textLb = 'Điền thông tin cho ' + str(obj)
-	Label(second_frame, text=textLb, bg='gray').grid(
-		row=0, 
-		column=0, 
-		pady=10, 
-		padx=2, 
-		ipadx=20,
-		ipady=10
-		)
+		fields = []
+		for syntax, field in self.savedTable.sqlSyntax.items():
+			if syntax != self.tableModel.pk:
+				fields.append(field)
+			
+		mf = MultipleForms(self.window, (0.01, 0.1), fields)
+		mf.createGui()
 
-	Button(second_frame, text='Save', bg='gray', command=save).grid(
-		row=0, 
-		column=5, 
-		pady=10, 
-		padx=2, 
-		ipadx=20,
-		ipady=10
-		)
-
-	row = 2
-	fDict = {}
-	for d in data:
-		Label(second_frame, text=fields[startField], bg='gray').grid(
-								row=row, 
-								column=0, 
-								pady=10, 
-								padx=2, 
-								ipadx=20,
-								ipady=10
-								)
-		Label(second_frame, text=d).grid(
-								row=row, 
-								column=1, 
-								pady=10,  
-								ipadx=20,
-								ipady=10
-								)
-
-
-		col = 2
-		inputsDict = {}
-		for i in range(2, len(fields)):
-			Label(second_frame, text=fields[i]).grid(
-				row=row, 
-				column=col, 
-				pady=10, 
-				padx=2,
-				ipadx=20,
-				ipady=10				
-				)
-
-			fieldVar = StringVar()
-			fieldVar.set('')
-			Entry(second_frame, textvariable=fieldVar).grid(
-				row=row, 
-				column=col + 1, 
-				pady=2, 
-				ipadx=20,
-				ipady=10
-				)
-			col += 2
-			inputsDict.setdefault(fields[i], fieldVar)
-		
-		fDict.setdefault(d, inputsDict)
-
-		row += 1
+	
+obj = {
+	'STT': 10, 
+	'Tên Công Trình': 'cong trinh moi', 
+	'Địa Chỉ': 'Hung Loi', 
+	'Tỉnh Thành': 'sai gon', 
+	'Kinh Phí': 100, 
+	'Tên Chủ': 'NCHM', 
+	'Tên Thầu': 'le van son', 
+	'Ngày Bắt Đầu': '2020-10-10'
+	}
+objCt = Congtrinh(*obj.values())
+print(objCt.getKienTrucSu())
+root = Tk()
+root.geometry('600x600')
+mft = MultipleFormsFrame(root, Congtrinh, Thietke)
+mft.createGui()
+root.mainloop()
 
 
 
-
-	root.mainloop()
-
-
-# scrollFrame()
+	

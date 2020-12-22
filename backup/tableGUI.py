@@ -1,16 +1,12 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
-from PIL import ImageTk, Image
-# import  PIL.Image
 
 from mysqlConnection import ConnectionToMySQl
 from formsGui import Form
 from detailGUI import Details
 from model import *
 
-LABEL_FONT = ("Sitka Banner", 13)
-TITLE_FONT = ("Comic Sans MS", 22, "bold")
 
 class TableGUI():
 	def __init__(self, window, model, app=None):
@@ -22,7 +18,6 @@ class TableGUI():
 						rowheight=40
 		)
 		style.configure("mystyle.Treeview.Heading", font=('Times New Roman', 12,'bold'))
-		style.configure("TMenubutton", background="#CAD2E9")
 
 		self.model = model
 		self.window = window
@@ -32,62 +27,34 @@ class TableGUI():
 		self.defaultStatement = f'select * from {self.model.table}'
 
 		# Label frames to hold component
-		self.tableFrame = tk.LabelFrame(self.window, font=TITLE_FONT, text=self.model.tableName)
-		self.searchFrame = tk.LabelFrame(self.window, text='Tìm Kiếm')
+		self.tableFrame = tk.LabelFrame(self.window, text=self.model.tableName)
+		self.searchFrame = tk.LabelFrame(self.window, text='Search')
 
 		# Table and its crollbar component
-		self.trv = ttk.Treeview(self.tableFrame, show="headings", height="10", style="mystyle.Treeview")
+		self.trv = ttk.Treeview(self.tableFrame, show="headings", height="7", style="mystyle.Treeview")
 		self.vsb = ttk.Scrollbar(self.tableFrame, orient="vertical", command=self.trv.yview)
-		self.hsb = ttk.Scrollbar(self.tableFrame, orient="horizontal", command=self.trv.xview)
 
 		# update data in table
 		self.updateData(self.defaultStatement)
 
 		# Searchbar
-		self.searchBtn = tk.Button(
-			self.searchFrame, 
-			bg='#CAD2E9', fg='#1640C5', 
-			text='Tìm Kiếm',
-			font=LABEL_FONT, 
-			command=self.search,
-			compound = 'left'
-			)
+		self.searchBtn = tk.Button(self.searchFrame, bg='green', fg='white', text='Search', command=self.search)
 		self.searchInput = tk.Entry(self.searchFrame)
 		self.searchTopic = tk.StringVar()
-		self.searchTopic.set(self.model.imptField)
-		self.filterDropDown = ttk.OptionMenu(self.searchFrame, self.searchTopic, *self.columnSyntaxs)
+		self.searchTopic.set(self.columnSyntaxs[1])
+		self.filterDropDown = tk.OptionMenu(self.searchFrame, self.searchTopic, *self.columnSyntaxs)
 
 		# order by topic
-		self.orderLb = tk.Label(self.searchFrame, bg='#8C8C8C', fg='black', text='Sắp Xếp')
+		self.orderLb = tk.Label(self.searchFrame, bg='black', fg='white', text='Order By')
 
 		self.orderByTopic = tk.StringVar()
-		self.orderByTopic.set(self.model.imptField)
-		self.orderDropdown = ttk.OptionMenu(self.searchFrame, self.orderByTopic, *self.columnSyntaxs)
+		self.orderByTopic.set(self.columnSyntaxs[1])
+		self.orderDropdown = tk.OptionMenu(self.searchFrame, self.orderByTopic, *self.columnSyntaxs)
 
 		# 
-		self.addBtn = tk.Button(
-			self.searchFrame,
-			bg='#CAD2E9', 
-			fg='#1640C5', 
-			text='Thêm', 
-			font=LABEL_FONT,
-			command=self.addData
-			)
-		self.editBtn = tk.Button(
-			self.searchFrame,
-			bg='#CAD2E9', 
-			fg='#1640C5', 
-			text='Sửa', 
-			font=LABEL_FONT,
-			command=self.editData)
-		self.delBtn = tk.Button(
-			self.searchFrame,
-			bg='red', 
-			fg='white', 
-			text='Xóa', 
-			font=LABEL_FONT,
-			command=self.deleteData
-			)
+		self.addBtn = tk.Button(self.searchFrame, fg='red', text='Add', command=self.addData)
+		self.editBtn = tk.Button(self.searchFrame, fg='red', text='Edit', command=self.editData)
+		self.delBtn = tk.Button(self.searchFrame, fg='red', text='Delete', command=self.deleteData)
 
 
 	# update data from database
@@ -109,26 +76,24 @@ class TableGUI():
 			self.trv.insert('', 'end', values=data)
 
 	def createGUI(self):
-		self.tableFrame.place(relx=0, rely=0, relwidth=0.75, relheight=0.7)
-		self.searchFrame.place(relx=0.75, rely=0, relwidth=0.25, relheight=0.7)
+		self.tableFrame.place(relx=0, rely=0, relwidth=1, relheight=0.5)
+		self.searchFrame.place(relx=0, rely=0.57, relwidth=1, relheight=0.3)
 
-		self.trv.pack(side='top')
+		self.trv.pack(side='left')
 
-		self.vsb.place(relx=0.98, rely=0.05, relwidth=0.02, relheight=0.9)
-		self.hsb.place(relx=0, rely=0.95, relwidth=1, relheight=0.05)
-		self.trv.configure(xscrollcommand=self.hsb.set)
+		self.vsb.place(relx=0.97, rely=0, relwidth=0.02, relheight=0.7)
 		self.trv.configure(yscrollcommand=self.vsb.set)
 
-		self.searchBtn.place(relx=0.05, rely=0.05, relwidth=0.3, relheight=0.1)
-		self.searchInput.place(relx=0.36, rely=0.05, relwidth=0.64, relheight=0.1)
-		self.filterDropDown.place(relx=0.05, rely=0.15, relwidth=0.94, relheight=0.15)
+		self.searchBtn.place(relx=0.05, rely=0.05, relwidth=0.1, relheight=0.15)
+		self.searchInput.place(relx=0.16, rely=0.05, relwidth=0.25, relheight=0.15)
+		self.filterDropDown.place(relx=0.33, rely=0.05, relwidth=0.1, relheight=0.15)
 
-		self.orderLb.place(relx=0.05, rely=0.32, relwidth=0.3, relheight=0.1)
-		self.orderDropdown.place(relx=0.35, rely=0.32, relwidth=0.64, relheight=0.1)
+		self.orderLb.place(relx=0.45, rely=0.05, relwidth=0.1, relheight=0.15)
+		self.orderDropdown.place(relx=0.55, rely=0.05, relwidth=0.1, relheight=0.15)
 
-		self.addBtn.place(relx=0.05, rely=0.65, relwidth=0.9, relheight=0.1)
-		self.editBtn.place(relx=0.05, rely=0.75, relwidth=0.9, relheight=0.1)
-		self.delBtn.place(relx=0.05, rely=0.85, relwidth=0.9, relheight=0.1)
+		self.addBtn.place(relx=0.05, rely=0.55, relwidth=0.1, relheight=0.15)
+		self.editBtn.place(relx=0.17, rely=0.55, relwidth=0.1, relheight=0.15)
+		self.delBtn.place(relx=0.29, rely=0.55, relwidth=0.1, relheight=0.15)
 
 		self.trv['columns'] = tuple(range(1, len(self.columns) + 1))
 		for column in range(1, len(self.columns) + 1):
@@ -182,16 +147,10 @@ class TableGUI():
 
 		selectedVal = self.trv.item(selected)['values']
 		obj = dict(zip(self.model.sqlSyntax.values(), selectedVal))
+		self.model.deleteFromDb(obj)
 
-		confirmMsg = messagebox.askokcancel(
-			'Delete', 
-			'Are you sure to permantly remove this item from database?'
-			)
-		if confirmMsg:
-			self.model.deleteFromDb(obj)
-
-			if self.app is not None:
-				self.app.changeTableView(self.model)
+		if self.app is not None:
+			self.app.changeTableView(self.model)
 
 
 	def bindings(self):
@@ -205,7 +164,6 @@ class TableGUI():
 		
 		selectedVal = self.trv.item(selected)['values']
 		obj = dict(zip(self.model.sqlSyntax.values(), selectedVal))
-		print(obj)
 		detail = Details(self.window, self.model, obj)
 		detail.createGui()
 

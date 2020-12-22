@@ -9,7 +9,7 @@ from model import *
 
 # Fonts
 TITLE_FONT = ("Comic Sans MS", 25, "bold")
-LABEL_FONT = ("Sitka Banner", 15, "bold")
+LABEL_FONT = ("Sitka Banner", 13)
 ENTRY_FONT = ("Sitka Banner", 20)
 
 # Colors
@@ -65,7 +65,8 @@ class Form():
 		# Form's Name
 		titleLb = tk.Label(
 			self.contentFrame, 
-			fg='#FF2323', 
+			fg='black', 
+			bg=LABEL_COLOR,
 			text='Thêm ' + self.tableModel.tableName, 
 			font=TITLE_FONT
 			)
@@ -74,7 +75,7 @@ class Form():
 		fieldNames = self.tableModel.formsField().get('arribute')
 		lbRely = 0.2
 		for field in fieldNames:
-			fieldLb = tk.Label(self.contentFrame, fg='#1640C5', text=field, font=LABEL_FONT, anchor='w')
+			fieldLb = tk.Label(self.contentFrame, fg='black', text=field, font=LABEL_FONT, anchor='w')
 			fieldLb.place(relx=0.02, rely=lbRely, relwidth=0.13, relheight=0.035)
 
 			# Var to save input
@@ -90,7 +91,7 @@ class Form():
 		fkFields = self.tableModel.formsField().get("forgeinKey").keys()
 		lbRely = 0.2
 		for field in fkFields:
-			fieldLb = tk.Label(self.contentFrame, fg='black', text=field, font=LABEL_FONT, bg='light gray')
+			fieldLb = tk.Label(self.contentFrame, fg='black', text=field, font=LABEL_FONT, bg='gray')
 			fieldLb.place(relx=0.6, rely=lbRely, relwidth=0.13, relheight=0.07)
 
 			tModel = self.tableModel.formsField().get("forgeinKey").get(field)
@@ -110,7 +111,7 @@ class Form():
 
 			btn = self.funcButton(
 				self.contentFrame, 
-				'Thêm ' + field,
+				'Them ' + field,
 				self.window, 
 				self.tableModel, 
 				tModel,
@@ -123,14 +124,14 @@ class Form():
 		# Submit Button
 		submitBtn = tk.Button(
 						self.contentFrame, 
-						fg='white', text='Lưu', 
-						font=LABEL_FONT, bg='#1640C5', 
+						fg='white', text='Save', 
+						font=LABEL_FONT, bg='green', 
 						command=self.submit
 						)
 		submitBtn.place(relx=0.85, rely=0.8, relwidth=0.1, relheight=0.07)
 
 		# Back btn
-		gobackBtn = tk.Button(self.contentFrame, bg='gray', fg='white', text='trở về',font=('Courier', 10), command=self.back)
+		gobackBtn = tk.Button(self.contentFrame, bg='red', fg='white', text='Back', command=self.back)
 		gobackBtn.place(relx=0, rely=0, relwidth=0.1, relheight=0.07)
 
 		self.preFill()
@@ -182,35 +183,35 @@ class Form():
 		self.contentFrame.destroy()
 
 		# Futher Info
-		# if self.tableModel is Congtrinh:
-		# 	msg = messagebox.askokcancel(
-		# 		'Thêm Công Nhân', 
-		# 		'Bạn có muốn thêm công nhân làm việc?'
-		# 		)
+		if self.tableModel is Congtrinh:
+			msg = messagebox.askokcancel(
+				'Them Cong Nhan', 
+				'Ban co muon them thong tin cong nhan lam viec?'
+				)
 				
-		# 	if msg:
-		# 		self.app.root.destroy()
-		# 		checkList(Congnhan, self.obj)
-		# 		# msg2 = messagebox.askokcancel(
-		# 		# 	'Them KIen Truc Su',
-		# 		# 	'Ban co muon them thong tin kien truc su lam viec?'
-		# 		# 	)
+			if msg:
+				self.app.root.destroy()
+				checkList(Congnhan, self.obj)
+				# msg2 = messagebox.askokcancel(
+				# 	'Them KIen Truc Su',
+				# 	'Ban co muon them thong tin kien truc su lam viec?'
+				# 	)
 				
-		# 		# if msg2:
-		# 		# 	self.app.root.destroy()
-		# 		# 	checkList(Ktrucsu, self.obj)
-		# 		self.app.reborn()
+				# if msg2:
+				# 	self.app.root.destroy()
+				# 	checkList(Ktrucsu, self.obj)
+				self.app.reborn()
 		
-		# elif self.tableModel is Congnhan or self.tableModel is Ktrucsu:
-		# 	msg = messagebox.askokcancel(
-		# 		'Them Cong Trinh', 
-		# 		'Ban co muon them thong tin cong trinh doi tuong dang lam viec?'
-		# 		)
+		elif self.tableModel is Congnhan or self.tableModel is Ktrucsu:
+			msg = messagebox.askokcancel(
+				'Them Cong Trinh', 
+				'Ban co muon them thong tin cong trinh doi tuong dang lam viec?'
+				)
 				
-		# 	if msg:
-		# 		self.app.root.destroy()
-		# 		checkList(Congtrinh, self.obj)
-		# 		self.app.reborn()
+			if msg:
+				self.app.root.destroy()
+				checkList(Congtrinh, self.obj)
+				self.app.reborn()
 
 		# prefill previous form if there is one
 		if self.pFormInfo is not None:

@@ -9,7 +9,7 @@ HEIGHT = 500
 WIDTH  = 1200
 
 fontHeadings = ('Mongolian Baiti', 30,'bold')
-fontFields = ('Courier', 12,'bold')
+fontFields = ('Courier', 10,'bold')
 fontData = ('Courier', 12)
 
 
@@ -26,9 +26,10 @@ class Details():
 		# Main Label
 		nameLb = tk.Label(
 			self.contentFrame,
-			text='TÊN CÔNG TRÌNH',
+			text='Ten Cong Trinh',
 			font=fontHeadings,
-			fg='black'
+			fg='red',
+			bg='gray'
 		)
 		nameLb.place(relx=0.15, rely=0.05, relwidth=0.7, relheight=0.1)
 
@@ -38,15 +39,16 @@ class Details():
 				self.contentFrame,
 				text=field,
 				font=fontFields,
-				fg='#3F66DC'
-			).place(relx=0.02, rely=startPos, relwidth=0.15, relheight=0.075)
+				fg='blue',
+				bg='gray'
+			).place(relx=0.05, rely=startPos, relwidth=0.1, relheight=0.075)
 
 			tk.Label(
 				self.contentFrame,
 				text=data,
 				font=fontData,
-				fg='#FF2323',
-				bg='white'
+				fg='blue',
+				bg='gray'
 			).place(relx=0.17, rely=startPos, relwidth=0.4, relheight=0.075)
 
 			startPos += 0.08
@@ -76,7 +78,7 @@ class Details():
 			startPos += 0.3
 
 
-		gobackBtn = tk.Button(self.contentFrame, bg='gray', fg='white', text='trở về',font=('Courier', 10), command=self.back)
+		gobackBtn = tk.Button(self.contentFrame, bg='red', fg='white', text='Back', command=self.back)
 		gobackBtn.place(relx=0, rely=0, relwidth=0.1, relheight=0.07)
 	
 	def back(self):
