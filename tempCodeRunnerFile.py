@@ -1,1 +1,6 @@
-root.geometry('1200x600')
+print(objCt.getKienTrucSu())
+root = Tk()
+root.geometry('600x600')
+mft = MultipleFormsFrame(root, objCt, Thietke)
+mft.createGui()
+root.mainloop()

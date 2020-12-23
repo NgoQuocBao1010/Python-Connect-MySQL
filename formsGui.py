@@ -4,6 +4,7 @@ from tkinter import messagebox
 
 from mysqlConnection import ConnectionToMySQl
 from checkList import *
+from multipleForm import MultipleFormsFrame
 from model import *
 
 
@@ -18,13 +19,14 @@ LABEL_COLOR = 'Blue'
 
 class Form():
 	class funcButton():
-		def __init__(self, canvas, text, root, fModel, tModel, form=None, coordinate=(0, 0, 0, 0)):
+		def __init__(self, canvas, text, root, fModel, tModel, form=None, m2m=False, coordinate=(0, 0, 0, 0)):
 			self.canvas = canvas
 			self.text = text
 			self.root = root
 			self.fModel = fModel
 			self.tModel = tModel
 			self.form = form
+			self.m2m = m2m
 			self.coordinate = coordinate
 			self.bg = 'black'
 			self.fg = 'white'
@@ -43,10 +45,14 @@ class Form():
 			summit.place(relx=x, rely=y, relwidth=width, relheight=height)
 
 		def addNew(self):
-			values = self.form.getValues()
-			self.form.contentFrame.pack_forget()
-			form = Form(self.form.window, self.tModel, pFormInfo=(self.form, values))
-			form.createGUI()
+			if not self.m2m:
+				values = self.form.getValues()
+				self.form.contentFrame.pack_forget()
+				form = Form(self.form.window, self.tModel, pFormInfo=(self.form, values))
+				form.createGUI()
+			else:
+				# self.form.contentFrame.pack_forget()
+				self.form.submit(True)
 
 	def __init__(self, window, tableModel, app=None, edit=False, pFormInfo=None, values={}):
 		self.window = window
@@ -120,6 +126,23 @@ class Form():
 
 			lbRely += 0.3
 		
+		m2mFields = self.tableModel.formsField().get("manyToMany")
+		if m2mFields is not None:
+			self.m2mText = 'Thêm '
+			for field in m2mFields:
+				self.m2mText += field.tableName + ' '
+
+			btn = self.funcButton(
+				self.contentFrame, 
+				self.m2mText,
+				self.window, 
+				self.tableModel, 
+				tModel=None,
+				form=self, 
+				m2m=True,
+				coordinate=(0.6, 0.8, 0.35, 0.07)
+			)
+		
 		# Submit Button
 		submitBtn = tk.Button(
 						self.contentFrame, 
@@ -127,7 +150,7 @@ class Form():
 						font=LABEL_FONT, bg='#1640C5', 
 						command=self.submit
 						)
-		submitBtn.place(relx=0.85, rely=0.8, relwidth=0.1, relheight=0.07)
+		submitBtn.place(relx=0.85, rely=0.1, relwidth=0.1, relheight=0.07)
 
 		# Back btn
 		gobackBtn = tk.Button(self.contentFrame, bg='gray', fg='white', text='trở về',font=('Courier', 10), command=self.back)
@@ -150,15 +173,23 @@ class Form():
 
 		return values
 
-	def submit(self):
+	def submit(self, m2m=False):
 		values = self.getValues()
 
 		try:
 			self.obj = self.tableModel.saveToDatabase(values, self.edit)
 			messagebox.showinfo('Succesful!!', 'Your Data has been saved!!')
 
-			if self.app is not None:
-				self.app.changeTableView(self.tableModel)
+			if m2m:
+				if type(self.obj) is Congtrinh:
+					mtf = MultipleFormsFrame(self.window, self.obj, Thietke, containInfo=(self.app, self.tableModel))
+					mtf.createGui()
+				else:
+					mtf = MultipleFormsFrame(self.window, self.obj, None, containInfo=(self.app, self.tableModel))
+					mtf.createGui()
+			else:
+				if self.app is not None:
+					self.app.changeTableView(self.tableModel)
 
 			self.back()
 
@@ -181,38 +212,6 @@ class Form():
 	def back(self):
 		self.contentFrame.destroy()
 
-		# Futher Info
-		# if self.tableModel is Congtrinh:
-		# 	msg = messagebox.askokcancel(
-		# 		'Thêm Công Nhân', 
-		# 		'Bạn có muốn thêm công nhân làm việc?'
-		# 		)
-				
-		# 	if msg:
-		# 		self.app.root.destroy()
-		# 		checkList(Congnhan, self.obj)
-		# 		# msg2 = messagebox.askokcancel(
-		# 		# 	'Them KIen Truc Su',
-		# 		# 	'Ban co muon them thong tin kien truc su lam viec?'
-		# 		# 	)
-				
-		# 		# if msg2:
-		# 		# 	self.app.root.destroy()
-		# 		# 	checkList(Ktrucsu, self.obj)
-		# 		self.app.reborn()
-		
-		# elif self.tableModel is Congnhan or self.tableModel is Ktrucsu:
-		# 	msg = messagebox.askokcancel(
-		# 		'Them Cong Trinh', 
-		# 		'Ban co muon them thong tin cong trinh doi tuong dang lam viec?'
-		# 		)
-				
-		# 	if msg:
-		# 		self.app.root.destroy()
-		# 		checkList(Congtrinh, self.obj)
-		# 		self.app.reborn()
-
-		# prefill previous form if there is one
 		if self.pFormInfo is not None:
 			form = self.pFormInfo[0]
 			form.values = self.pFormInfo[1]

@@ -133,8 +133,10 @@ class Congtrinh:
 		conn.cursor.callproc('getKTSTuCTrinh', args)
 		rs = conn.cursor.stored_results()
 
+		# dict(zip(self.cursor.column_names, self.cursor.fetchone()))
 		for row in rs:
 			data = row.fetchall()
+			# print(row.column_names)
 
 		return data
 

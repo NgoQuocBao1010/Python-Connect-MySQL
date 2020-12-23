@@ -142,7 +142,8 @@ insert into  thietke values ('nguyen song do quyen',   2       ,    6           
 insert into  thietke values ('truong minh thai',   6       ,    27          );
 insert into  thietke values ('le kim dung',   4       ,    20          );
 insert into  thietke values ('truong minh thai',   1       ,    12          );
-
+insert into  thietke values ('truong minh thai',   10      ,    12          );
+insert into  thietke values ('le thanh tung',   10      ,    12          );
 
 
 -- Bang cong trinh
@@ -314,7 +315,7 @@ DELIMITER ;
 DELIMITER //
 create procedure getTenCongTrinhTuCongNhan(hotencn varchar(50))
 	Begin
-		select ten_ctr 
+		select ten_ctr, ngay_tgia, so_ngay
         from cgtrinh c inner join thamgia tg 
         on c.stt_ctr=tg.stt_ctr
         where tg.hoten_cn=hotencn;
@@ -327,11 +328,11 @@ DELIMITER ;
 DELIMITER //
 create procedure getCongNhanTuCTrinh(sttctr varchar(50))
 	Begin
-		select hoten_cn from thamgia
+		select hoten_cn, ngay_tgia, so_ngay from thamgia
         where stt_ctr=sttctr;
 	End //
 DELIMITER ;
-call getCongNhanTuCTrinh(3);
+call getCongNhanTuCTrinh(10);
 
 
 DELIMITER //
@@ -340,7 +341,7 @@ create procedure themCongNhanLamViec(hotencn varchar(50), sttCtr int, ngayTg dat
 		insert into thamgia values (hotencn, sttCtr, ngayTg, songay);
 	End //
 DELIMITER ;
-call themCongNhanLamViec('nguyen thi suu', 5, '1994-12-18', 30);
+call themCongNhanLamViec('dang van son', 10, '1994-12-18', 12);
 
 
 
@@ -394,10 +395,10 @@ DELIMITER ;
 -- call getTenCongTrinhTuKTS('le thanh tung');
 
 
-DELIMITER //
+DELIMITER // -- da sua
 create procedure getKTSTuCTrinh(sttctr int)
 	Begin
-		select hoten_kts from thietke
+		select hoten_kts, thu_lao from thietke
         where stt_ctr = sttctr;
 	End //
 DELIMITER ;

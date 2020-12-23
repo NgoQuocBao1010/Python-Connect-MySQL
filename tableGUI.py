@@ -55,14 +55,24 @@ class TableGUI():
 		self.searchInput = tk.Entry(self.searchFrame)
 		self.searchTopic = tk.StringVar()
 		self.searchTopic.set(self.model.imptField)
-		self.filterDropDown = ttk.OptionMenu(self.searchFrame, self.searchTopic, *self.columnSyntaxs)
+		self.filterDropDown = ttk.OptionMenu(
+			self.searchFrame, 
+			self.searchTopic, 
+			self.model.imptField,
+			*self.columnSyntaxs
+			)
 
 		# order by topic
 		self.orderLb = tk.Label(self.searchFrame, bg='#8C8C8C', fg='black', text='Sắp Xếp')
 
 		self.orderByTopic = tk.StringVar()
 		self.orderByTopic.set(self.model.imptField)
-		self.orderDropdown = ttk.OptionMenu(self.searchFrame, self.orderByTopic, *self.columnSyntaxs)
+		self.orderDropdown = ttk.OptionMenu(
+			self.searchFrame, 
+			self.orderByTopic, 
+			self.model.imptField,
+			*self.columnSyntaxs
+			)
 
 		# 
 		self.addBtn = tk.Button(

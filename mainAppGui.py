@@ -56,7 +56,6 @@ class Application():
 		btn4.place(relx=0.1, rely=0.80, relwidth=0.8, relheight=0.1)
 
 		# ------
-
 		self.exitBtn = tk.Button(
 					self.navFrame, text='thoát', bg='#E94F37', fg='white',font=TITLE_FONT, 
 					command = self.exit

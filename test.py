@@ -1,26 +1,15 @@
 # from tkinter import Tk, font
 # root = Tk()
 # print(font.families())
+from tkinter import *
 
+root = Tk()    
 
-try:
-    from Tkinter import Frame, Entry, Tk
-except ImportError:
-    from tkinter import Frame, Entry, Tk
-    
+users = ['Anne', 'Bea', 'Chris']
 
-root = Tk()
-frame1 = Frame(root, highlightbackground="green", highlightcolor="green", highlightthickness=1, width=100, height=100, bd= 0)
-frame1.pack()
-frame1.pack_propagate(False)
+for x in range(len(users)):
+    l = Checkbutton(root, text=users[x][0], variable=users[x])
+    print("l = Checkbutton(root, text=" + str(users[x][0]) + ", variable=" + str(users[x]))
+    l.pack(anchor = 'w')
 
-Entry(frame1).pack()
-
-
-frame2 = Frame(root, highlightbackground="red", highlightcolor="red", highlightthickness=1, width=100, height=100, bd= 0)
-frame2.pack()
-frame2.pack_propagate(False)
-
-Entry(frame2).pack()
-
-root.mainloop()
+root.mainloop() 
