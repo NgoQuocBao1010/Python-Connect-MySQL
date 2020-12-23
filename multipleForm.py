@@ -6,6 +6,10 @@ from collections import OrderedDict
 
 from mysqlConnection import ConnectionToMySQl
 
+SUB_TITLE = ("Sitka Banner", 13)
+TITLE_FONT = ("Comic Sans MS", 15, "bold")
+LABLE_FONT = ("Sitka Banner", 13, "bold")
+
 
 class MultipleForms():
 	def __init__(self, window, keyModel, coordinate=(0, 0), fields=[], values={}):
@@ -17,7 +21,7 @@ class MultipleForms():
 
 	def createGui(self):
 		self.contentFrame = Frame(self.window)
-		self.contentFrame.place(relx=self.relx, rely=self.rely, relwidth=1, relheight=0.15)
+		self.contentFrame.place(relx=self.relx, rely=self.rely, relwidth=1, relheight=0.12)
 
 		marginx = 0
 		self.getKeyOptions()
@@ -26,8 +30,9 @@ class MultipleForms():
 			Label(
 				self.contentFrame,
 				text=field,
-				bg='#3F66DC'
-			).place(relx=0.01 + marginx, rely=0, relwidth=0.2, relheight=0.25)
+				bg='#3F66DC',
+				font=LABLE_FONT
+			).place(relx=0.01 + marginx, rely=0, relwidth=0.2, relheight=0.4)
 
 			initText = self.values.get(field) if len(self.values) != 0 else ''
 			textVar = StringVar()
@@ -39,12 +44,12 @@ class MultipleForms():
 					textVar,
 					initText,
 					*self.options
-				).place(relx=0.01 + marginx, rely=0.31, relwidth=0.25, relheight=0.6)
+				).place(relx=0.01 + marginx, rely=0.5, relwidth=0.25, relheight=0.45)
 			else:
 				Entry(
 					self.contentFrame,
 					textvariable=textVar
-				).place(relx=0.01 + marginx, rely=0.31, relwidth=0.25, relheight=0.6)
+				).place(relx=0.01 + marginx, rely=0.5, relwidth=0.25, relheight=0.45)
 			marginx += 0.28
 			self.inputs.append(textVar)
 
@@ -54,7 +59,7 @@ class MultipleForms():
 			self.contentFrame,
 			variable=self.variable,
 		)
-		self.checkBox.place(relx=0.9, rely=0.2, relwidth=0.05, relheight=0.3)
+		self.checkBox.place(relx=0.9, rely=0.2, relwidth=0.1, relheight=0.5)
 		
 	
 	def getKeyOptions(self):
@@ -92,19 +97,20 @@ class MultipleFormsFrame():
 		self.getData()
 		self.contentFrame.pack(fill='both', expand='yes') 
 
-		firstText = 'Thêm ' + self.keyModel.tableName + ' cho '
+		firstText = 'Thêm ' + self.keyModel.tableName + ' cho ' + self.keyObject.tableName + ' '
 		Label(
 			self.contentFrame,
 			text=firstText,
-			bg='#3F66DC'
-		).place(relx=0.01, rely=0.01, relwidth=0.3, relheight=0.1)
+			font=SUB_TITLE
+		).place(relx=0.01, rely=0.01, relwidth=0.4, relheight=0.1)
 
 
 		Label(
 			self.contentFrame,
 			text=str(self.keyObject),
-			bg='#3F66DC'
-		).place(relx=0.31, rely=0.01, relwidth=0.5, relheight=0.1)
+			anchor='w',
+			font=TITLE_FONT
+		).place(relx=0.45, rely=0.01, relwidth=0.33, relheight=0.1)
 
 		# Add button
 		Button(
@@ -125,9 +131,13 @@ class MultipleFormsFrame():
 		).place(relx=0.9, rely=0.9, relwidth=0.09, relheight=0.07)
 
 		self.fields = []
+		
 		for syntax, field in self.savedTable.sqlSyntax.items():
 			if syntax != self.tableModel.pk:
 				self.fields.append(field)
+		
+		if type(self.keyObject) is not Congtrinh:
+			self.fields[0] = 'Tên Công Trình'
 		
 		self.forms = []
 		self.marginy = 0
@@ -156,6 +166,10 @@ class MultipleFormsFrame():
 
 	# Add another form
 	def addMoreForm(self):
+		if len(self.forms) >= 4:
+			messagebox.showerror('Vượt số hạn!', f'Không được thêm quá 4 {self.keyModel.tableName}')
+			return
+		
 		mf = MultipleForms(
 			self.contentFrame, 
 			self.keyModel,
@@ -188,46 +202,48 @@ class MultipleFormsFrame():
 		for data in self.data:
 			fValues.append(data[0])
 		
-
-		for value in aValues:
-			if value in fValues:
-				if type(self.keyObject) is Congtrinh:
-					args = [value, str(self.keyObject)]
-					for v in values.get(value):
-						if v not in args:
-							args.append(v)
-				else:
-					args = [str(self.keyObject), value]
-					for v in values.get(value):
-						if v not in args:
-							args.append(v)
-				print('Update', args)
-				self.savedTable.saveToDatabase(args, edit=True)
-			
-			else:
-				if type(self.keyObject) is Congtrinh:
-					args = [value, str(self.keyObject)]
-					for v in values.get(value):
-						if v not in args:
-							args.append(v)
-				else:
-					args = [str(self.keyObject), value]
-					for v in values.get(value):
-						if v not in args:
-							args.append(v)
+		try:
+			for value in aValues:
+				if value in fValues:
+					if type(self.keyObject) is Congtrinh:
+						args = [value, str(self.keyObject)]
+						for v in values.get(value):
+							if v not in args:
+								args.append(v)
+					else:
+						args = [str(self.keyObject), value]
+						for v in values.get(value):
+							if v not in args:
+								args.append(v)
+					print('Update', args)
+					self.savedTable.saveToDatabase(args, edit=True)
 				
-				print('Add', args)
-				self.savedTable.saveToDatabase(args)
-		
-		for value in fValues:
-			if value not in aValues:
-				if type(self.keyObject) is Congtrinh:
-					args = [value, str(self.keyObject)]
 				else:
-					args = [str(self.keyObject), value]
-				print('Delete', value)
-				self.savedTable.deleteFromDB(args)
-
+					if type(self.keyObject) is Congtrinh:
+						args = [value, str(self.keyObject)]
+						for v in values.get(value):
+							if v not in args:
+								args.append(v)
+					else:
+						args = [str(self.keyObject), value]
+						for v in values.get(value):
+							if v not in args:
+								args.append(v)
+					
+					print('Add', args)
+					self.savedTable.saveToDatabase(args)
+			
+			for value in fValues:
+				if value not in aValues:
+					if type(self.keyObject) is Congtrinh:
+						args = [value, str(self.keyObject)]
+					else:
+						args = [str(self.keyObject), value]
+					print('Delete', value)
+					self.savedTable.deleteFromDB(args)
+			messagebox.showinfo('', 'Your data has been updated!')
+		except Exception as e:
+			messagebox.showerror('Error!!!', str(e))
 		# print(self.savedTable)
 		self.contentFrame.destroy()
 		
@@ -257,10 +273,20 @@ obj = {
 	}
 objCt = Congtrinh(*obj.values())
 
-# print(objCt.getKienTrucSu())
+kts = {
+	'Họ và tên': 'Phu Nguyen', 
+	'Năm sinh': 2000, 
+	'Phái': 1, 
+	'Nơi tốt nghiệp': 'Can Tho', 
+	'Địa chỉ': 'Can Tho'
+	}
+objKts = Ktrucsu(*kts.values())
+
+print(objCt.getKienTrucSu())
 # root = Tk()
 # root.geometry('600x600')
-# mft = MultipleFormsFrame(root, objCt, Thietke)
+# # mft = MultipleFormsFrame(root, objCt, Thietke)
+# mft = MultipleFormsFrame(root, objKts, Thietke)
 # mft.createGui()
 # root.mainloop()
 

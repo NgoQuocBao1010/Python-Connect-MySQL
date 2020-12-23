@@ -1,6 +1,3 @@
-print(objCt.getKienTrucSu())
+from tkinter import Tk, font
 root = Tk()
-root.geometry('600x600')
-mft = MultipleFormsFrame(root, objCt, Thietke)
-mft.createGui()
-root.mainloop()
+print(font.families())

@@ -453,7 +453,7 @@ class Ktrucsu:
 		conn = ConnectionToMySQl()
 		args = (self.hotenkts, )
 		# args = ('nguyen thi suu', )
-		conn.cursor.callproc('getTenCongTrinhTuKTS', args)
+		conn.cursor.callproc('getCongTrinhTuKTS', args)
 		rs = conn.cursor.stored_results()
 
 		for row in rs:
@@ -535,7 +535,7 @@ class Thietke:
 
 	colData = {}
 	sqlSyntax =  {
-			'hoten_cn': 'Họ và tên',
+			'hoten_kts': 'Họ và tên',
 			'stt_ctr': 'STT',
 			'thu_lao': 'Thù Lao',
 	}

@@ -8,9 +8,9 @@ from model import *
 HEIGHT = 500
 WIDTH  = 1200
 
-fontHeadings = ('Mongolian Baiti', 30,'bold')
+fontHeadings = ('Felix Titling', 30,'bold')
 fontFields = ('Courier', 12,'bold')
-fontData = ('Courier', 12)
+fontData = ('Courier', 13, 'bold')
 
 
 class Details():
@@ -23,10 +23,13 @@ class Details():
 	def createGui(self):
 		self.contentFrame.pack(fill='both', expand='yes')
 		
+		typeOfDetail = self.tableModel.tableName
+		name = self.values.get(self.tableModel.sqlSyntax.get(self.tableModel.imptField))
+		title = typeOfDetail + ' ' + name.upper()
 		# Main Label
 		nameLb = tk.Label(
 			self.contentFrame,
-			text='TÊN CÔNG TRÌNH',
+			text=title,
 			font=fontHeadings,
 			fg='black'
 		)
@@ -41,6 +44,9 @@ class Details():
 				fg='#3F66DC'
 			).place(relx=0.02, rely=startPos, relwidth=0.15, relheight=0.075)
 
+			if field == 'Kinh Phí':
+				data = str(data)
+				data += ' triệu đồng'
 			tk.Label(
 				self.contentFrame,
 				text=data,
@@ -51,29 +57,30 @@ class Details():
 
 			startPos += 0.08
 		
-		startPos = 0.2
-		for field in self.tableModel.formsField().get('manyToMany'):
-			tableCN = TableTkinter(self.contentFrame, 0.6, startPos, 0.3, 0.2)
-			colData = {
-				field.tableName: (field.tableName, 100, 'w'),
-			}
-			tableCN.setColumns(colData)
+		if self.tableModel.formsField().get('manyToMany') is not None:
+			startPos = 0.2
+			for field in self.tableModel.formsField().get('manyToMany'):
+				tableCN = TableTkinter(self.contentFrame, 0.6, startPos, 0.3, 0.2)
+				colData = {
+					field.tableName: (field.tableName, 100, 'w'),
+				}
+				tableCN.setColumns(colData)
 
-			if field is Congnhan:
-				obj = Congtrinh(*self.values.values())
-				dataField = obj.getCongNhan()
-			
-			if field is Ktrucsu:
-				obj = Congtrinh(*self.values.values())
-				dataField = obj.getKienTrucSu()
-			
-			if field is Congtrinh:
-				obj = self.tableModel(*self.values.values())
-				dataField = obj.getCongTrinh()
-			
-			tableCN.insertData(dataField)
+				if field is Congnhan:
+					obj = Congtrinh(*self.values.values())
+					dataField = obj.getCongNhan()
+				
+				if field is Ktrucsu:
+					obj = Congtrinh(*self.values.values())
+					dataField = obj.getKienTrucSu()
+				
+				if field is Congtrinh:
+					obj = self.tableModel(*self.values.values())
+					dataField = obj.getCongTrinh()
+				
+				tableCN.insertData(dataField)
 
-			startPos += 0.3
+				startPos += 0.3
 
 
 		gobackBtn = tk.Button(self.contentFrame, bg='gray', fg='white', text='trở về',font=('Courier', 10), command=self.back)

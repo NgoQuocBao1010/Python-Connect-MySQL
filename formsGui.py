@@ -51,8 +51,12 @@ class Form():
 				form = Form(self.form.window, self.tModel, pFormInfo=(self.form, values))
 				form.createGUI()
 			else:
-				# self.form.contentFrame.pack_forget()
-				self.form.submit(True)
+				msg = messagebox.askokcancel(
+					f'Dữ liệu về sẽ được lưu trước khi thật hiện cập nhật! Tiếp tục?'
+					)
+
+				if msg:
+					self.form.submit(True)
 
 	def __init__(self, window, tableModel, app=None, edit=False, pFormInfo=None, values={}):
 		self.window = window
