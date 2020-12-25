@@ -4,7 +4,7 @@ from tkinter import ttk
 from table import TableTkinter
 from model import *
 
-fontHeadings = ('Felix Titling', 30,'bold')
+fontHeadings = ('Comic Sans MS', 25,'bold')
 fontFields = ('Courier', 12,'bold')
 fontData = ('Courier', 13, 'bold')
 
@@ -89,7 +89,7 @@ class Details():
 				startPos += 0.3
 
 
-		gobackBtn = tk.Button(self.contentFrame, bg='gray', fg='white', text='trở về',font=('Courier', 10), command=self.back)
+		gobackBtn = tk.Button(self.contentFrame, bg='#CAD2E9', fg='#1640C5', text='trở về',font=('Courier', 10), command=self.back)
 		gobackBtn.place(relx=0, rely=0, relwidth=0.1, relheight=0.07)
 	
 	def back(self):

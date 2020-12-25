@@ -67,6 +67,41 @@ class Congtrinh:
 			},
 			'manyToMany': [Congnhan, Ktrucsu],
 		}
+	
+	@classmethod
+	def information(self):
+		info = []
+		conn = ConnectionToMySQl()
+		args = ()
+		try:
+			conn.cursor.callproc('layCgtrinhHon1ty', args)
+			rs = conn.cursor.stored_results()
+			for s in rs:
+				data = s.fetchall()
+			
+			result = 'Các công trình có kinh phí hơn 1 tỷ đồng: '
+			for row in data:
+				result += row[0] + ', '
+			
+			result = result[:-2]
+			info.append(result)
+
+			conn.cursor.callproc('tongKinhPhiCacCongTrinh', args)
+			rs = conn.cursor.stored_results()
+			for s in rs:
+				data = s.fetchall()
+			
+			result = 'Tổng kinh phí của các công trình: '
+			for row in data:
+				result += str(row[0]) + ', '
+			result = result[:-2]
+			result += ' triệu đồng'
+			info.append(result)
+			return info
+		except Exception as e:
+			print(str(e))
+		finally:
+			conn.closeConnection()
 
 	@classmethod
 	def manyToManyField(cls, tableName):
@@ -188,6 +223,7 @@ class Chuthau:
 			'forgeinKey': {
 			}
 	}
+	
 
 	# method to save data to database whether if the data is new or edited
 	@classmethod
@@ -321,6 +357,42 @@ class Congnhan:
 			},
 			'manyToMany': [Congtrinh],
 		}
+
+	
+	@classmethod
+	def information(self):
+		info = []
+		conn = ConnectionToMySQl()
+		args = ()
+		try:
+			conn.cursor.callproc('layCgtrinhHon1ty', args)
+			rs = conn.cursor.stored_results()
+			for s in rs:
+				data = s.fetchall()
+			
+			result = 'Các công trình có kinh phí hơn 1 tỷ đồng: '
+			for row in data:
+				result += row[0] + ', '
+			
+			result = result[:-2]
+			info.append(result)
+
+			conn.cursor.callproc('tongKinhPhiCacCongTrinh', args)
+			rs = conn.cursor.stored_results()
+			for s in rs:
+				data = s.fetchall()
+			
+			result = 'Tổng kinh phí của các công trình: '
+			for row in data:
+				result += str(row[0]) + ', '
+			result = result[:-2]
+			result += ' triệu đồng'
+			info.append(result)
+			return info
+		except Exception as e:
+			print(str(e))
+		finally:
+			conn.closeConnection()
 
 	@classmethod
 	def manyToManyField(cls):

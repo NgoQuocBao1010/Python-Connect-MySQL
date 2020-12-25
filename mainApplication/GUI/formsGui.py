@@ -3,13 +3,13 @@ from tkinter import ttk
 from tkinter import messagebox
 
 from mysqlConnection import ConnectionToMySQl
-from checkList import *
+from multipleForm import MultipleFormsFrame
 from model import *
 
 
 # Fonts
 TITLE_FONT = ("Comic Sans MS", 25, "bold")
-LABEL_FONT = ("Sitka Banner", 13)
+LABEL_FONT = ("Sitka Banner", 15, "bold")
 ENTRY_FONT = ("Sitka Banner", 20)
 
 # Colors
@@ -17,21 +17,24 @@ LABEL_COLOR = 'Blue'
 
 
 class Form():
+
+	# special function with ability to change to another view
 	class funcButton():
-		def __init__(self, canvas, text, root, fModel, tModel, form=None, coordinate=(0, 0, 0, 0)):
+		def __init__(self, canvas, text, root, fModel, tModel, form=None, m2m=False, coordinate=(0, 0, 0, 0)):
 			self.canvas = canvas
 			self.text = text
 			self.root = root
 			self.fModel = fModel
 			self.tModel = tModel
 			self.form = form
+			self.m2m = m2m
 			self.coordinate = coordinate
-			self.bg = 'black'
-			self.fg = 'white'
+			self.bg = '#CAD2E9'
+			self.fg = 'green'
 			self.font = LABEL_FONT
 			self.create()
 
-
+		# create method
 		def create(self):
 			summit = tk.Button(	self.canvas, 
 								text 	=	self.text, 
@@ -42,11 +45,23 @@ class Form():
 			x, y, width, height = self.coordinate
 			summit.place(relx=x, rely=y, relwidth=width, relheight=height)
 
+		# New view
 		def addNew(self):
-			values = self.form.getValues()
-			self.form.contentFrame.pack_forget()
-			form = Form(self.form.window, self.tModel, pFormInfo=(self.form, values))
-			form.createGUI()
+			# change to form view
+			if not self.m2m:
+				values = self.form.getValues()
+				self.form.contentFrame.pack_forget()
+				form = Form(self.form.window, self.tModel, pFormInfo=(self.form, values))
+				form.createGUI()
+			else:
+				msg = messagebox.askokcancel(
+					'Tiếp tục?',
+					'Dữ liệu sẽ được lưu trước khi cập nhật!'
+					)
+
+				# change to multipleForm view
+				if msg:
+					self.form.submit(True)
 
 	def __init__(self, window, tableModel, app=None, edit=False, pFormInfo=None, values={}):
 		self.window = window
@@ -65,8 +80,7 @@ class Form():
 		# Form's Name
 		titleLb = tk.Label(
 			self.contentFrame, 
-			fg='black', 
-			bg=LABEL_COLOR,
+			fg='#FF2323', 
 			text='Thêm ' + self.tableModel.tableName, 
 			font=TITLE_FONT
 			)
@@ -75,7 +89,7 @@ class Form():
 		fieldNames = self.tableModel.formsField().get('arribute')
 		lbRely = 0.2
 		for field in fieldNames:
-			fieldLb = tk.Label(self.contentFrame, fg='black', text=field, font=LABEL_FONT, anchor='w')
+			fieldLb = tk.Label(self.contentFrame, fg='#1640C5', text=field, font=LABEL_FONT, anchor='w')
 			fieldLb.place(relx=0.02, rely=lbRely, relwidth=0.13, relheight=0.035)
 
 			# Var to save input
@@ -91,7 +105,7 @@ class Form():
 		fkFields = self.tableModel.formsField().get("forgeinKey").keys()
 		lbRely = 0.2
 		for field in fkFields:
-			fieldLb = tk.Label(self.contentFrame, fg='black', text=field, font=LABEL_FONT, bg='gray')
+			fieldLb = tk.Label(self.contentFrame, fg='white', text=field, font=LABEL_FONT, bg='#3F66DC')
 			fieldLb.place(relx=0.6, rely=lbRely, relwidth=0.13, relheight=0.07)
 
 			tModel = self.tableModel.formsField().get("forgeinKey").get(field)
@@ -109,9 +123,10 @@ class Form():
 			dropdown.place(relx=0.6, rely=lbRely + 0.1, relwidth=0.2, relheight=0.07)
 			self.fieldInputs.setdefault(field, fieldVar)
 
+			# change view button
 			btn = self.funcButton(
 				self.contentFrame, 
-				'Them ' + field,
+				'Thêm ' + field,
 				self.window, 
 				self.tableModel, 
 				tModel,
@@ -120,22 +135,43 @@ class Form():
 			)
 
 			lbRely += 0.3
+			conn.closeConnection()
+		
+		# many to many field handle
+		m2mFields = self.tableModel.formsField().get("manyToMany")
+		if m2mFields is not None:
+			self.m2mText = 'Cập nhật '
+			for field in m2mFields:
+				self.m2mText += field.tableName + '  '
+
+			# change to many to many form
+			btn = self.funcButton(
+				self.contentFrame, 
+				self.m2mText,
+				self.window, 
+				self.tableModel, 
+				tModel=None,
+				form=self, 
+				m2m=True,
+				coordinate=(0.6, 0.8, 0.35, 0.07)
+			)
 		
 		# Submit Button
 		submitBtn = tk.Button(
 						self.contentFrame, 
-						fg='white', text='Save', 
-						font=LABEL_FONT, bg='green', 
+						fg='white', text='Lưu', 
+						font=LABEL_FONT, bg='#14DE3B', 
 						command=self.submit
 						)
-		submitBtn.place(relx=0.85, rely=0.8, relwidth=0.1, relheight=0.07)
+		submitBtn.place(relx=0.85, rely=0.05, relwidth=0.1, relheight=0.07)
 
 		# Back btn
-		gobackBtn = tk.Button(self.contentFrame, bg='red', fg='white', text='Back', command=self.back)
+		gobackBtn = tk.Button(self.contentFrame, bg='#CAD2E9', fg='#1640C5', text='trở về',font=('Courier', 10), command=self.back)
 		gobackBtn.place(relx=0, rely=0, relwidth=0.1, relheight=0.07)
 
 		self.preFill()
 
+	# get all input values
 	def getValues(self):
 		values = {}
 		for field in self.fieldInputs.keys():
@@ -151,21 +187,32 @@ class Form():
 
 		return values
 
-	def submit(self):
+	# function when hit the submit button
+	# save data to databse ig the input is valid
+	def submit(self, m2m=False):
 		values = self.getValues()
 
 		try:
 			self.obj = self.tableModel.saveToDatabase(values, self.edit)
-			messagebox.showinfo('Succesful!!', 'Your Data has been saved!!')
+			messagebox.showinfo('Thành công!', 'Dữ liệu của bạn đã được lưu!')
 
-			if self.app is not None:
-				self.app.changeTableView(self.tableModel)
+			if m2m:
+				if type(self.obj) is Congtrinh:
+					mtf = MultipleFormsFrame(self.window, self.obj, Thietke, containInfo=(self.app, self.tableModel))
+					mtf.createGui()
+				else:
+					mtf = MultipleFormsFrame(self.window, self.obj, None, containInfo=(self.app, self.tableModel))
+					mtf.createGui()
+			else:
+				if self.app is not None:
+					self.app.changeTableView(self.tableModel)
 
 			self.back()
 
 		except Exception as e:
 			messagebox.showerror('Error!!!', str(e))
 
+	# use when edit data or to preserve data when toggel betwween view
 	# prefill all the forms for edit data
 	def preFill(self):
 		if len(self.values) != 0:
@@ -182,38 +229,6 @@ class Form():
 	def back(self):
 		self.contentFrame.destroy()
 
-		# Futher Info
-		if self.tableModel is Congtrinh:
-			msg = messagebox.askokcancel(
-				'Them Cong Nhan', 
-				'Ban co muon them thong tin cong nhan lam viec?'
-				)
-				
-			if msg:
-				self.app.root.destroy()
-				checkList(Congnhan, self.obj)
-				# msg2 = messagebox.askokcancel(
-				# 	'Them KIen Truc Su',
-				# 	'Ban co muon them thong tin kien truc su lam viec?'
-				# 	)
-				
-				# if msg2:
-				# 	self.app.root.destroy()
-				# 	checkList(Ktrucsu, self.obj)
-				self.app.reborn()
-		
-		elif self.tableModel is Congnhan or self.tableModel is Ktrucsu:
-			msg = messagebox.askokcancel(
-				'Them Cong Trinh', 
-				'Ban co muon them thong tin cong trinh doi tuong dang lam viec?'
-				)
-				
-			if msg:
-				self.app.root.destroy()
-				checkList(Congtrinh, self.obj)
-				self.app.reborn()
-
-		# prefill previous form if there is one
 		if self.pFormInfo is not None:
 			form = self.pFormInfo[0]
 			form.values = self.pFormInfo[1]
