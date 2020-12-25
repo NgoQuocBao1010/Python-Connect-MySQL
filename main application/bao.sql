@@ -26,9 +26,9 @@ CREATE TABLE  CHUNHAN (
 
 
 CREATE TABLE  CHUTHAU (
-	TEN_THAU varchar (20)  NOT NULL ,
+	TEN_THAU varchar (50)  NOT NULL ,
 	TEL char (7)  NULL ,
-	DCHI_THAU varchar (20)  NULL ,
+	DCHI_THAU varchar (50)  NULL ,
     primary key(ten_thau)
 ) ;
 
@@ -45,9 +45,9 @@ CREATE TABLE  CONGNHAN (
 CREATE TABLE  KTRUCSU (
 	HOTEN_KTS varchar (50)  NOT NULL ,
 	NAMS_KTS int NULL ,
-	PHAI char (2)  NULL ,
+	PHAI char (10)  NULL ,
 	NOI_TN varchar (50)  NULL ,
-	DCHI_LL_KTS varchar (30)  NULL ,
+	DCHI_LL_KTS varchar (50)  NULL ,
     primary key(hoten_kts)
 ) ;
 
@@ -67,9 +67,9 @@ CREATE TABLE  THIETKE (
 	HOTEN_KTS varchar (50)  NOT NULL ,
 	STT_CTR int NOT NULL ,
 	THU_LAO int NULL ,
-	PRIMARY KEY  	(	HOTEN_KTS,	STT_CTR	),
-	FOREIGN KEY 	(STT_CTR) REFERENCES  CGTRINH (	STT_CTR	) on delete cascade,
-    FOREIGN KEY (	HOTEN_KTS	) REFERENCES  KTRUCSU (	HOTEN_KTS ) on delete cascade
+	PRIMARY KEY  (HOTEN_KTS, STT_CTR),
+	FOREIGN KEY (STT_CTR) REFERENCES  CGTRINH (STT_CTR) on delete cascade,
+    FOREIGN KEY (HOTEN_KTS) REFERENCES  KTRUCSU (HOTEN_KTS) on delete cascade
 ) ;
 
 
@@ -332,7 +332,7 @@ create procedure getCongNhanTuCTrinh(sttctr varchar(50))
         where stt_ctr=sttctr;
 	End //
 DELIMITER ;
-call getCongNhanTuCTrinh(10);
+-- call getCongNhanTuCTrinh(10);
 
 
 DELIMITER //
@@ -341,7 +341,7 @@ create procedure themCongNhanLamViec(hotencn varchar(50), sttCtr int, ngayTg dat
 		insert into thamgia values (hotencn, sttCtr, ngayTg, songay);
 	End //
 DELIMITER ;
-call themCongNhanLamViec('dang van son', 10, '1994-12-18', 12);
+-- call themCongNhanLamViec('dang van son', 10, '1994-12-18', 12);
 
 
 
@@ -352,7 +352,7 @@ create procedure suaThongTinCongNhanLamViec(hotencn varchar(50), sttCtr int, nga
         where hoten_cn=hotencn and stt_ctr=sttCtr;
 	End //
 DELIMITER ;
-call suaThongTinCongNhanLamViec('nguyen thi suu', 5, '1994-12-18', 30);
+-- call suaThongTinCongNhanLamViec('nguyen thi suu', 5, '1994-12-18', 30);
 
 
 
@@ -384,25 +384,25 @@ DELIMITER ;
 
 -- Bang Thiet Ke
 DELIMITER //
-create procedure getTenCongTrinhTuKTS(hotenkts varchar(50))
+create procedure getCongTrinhTuKTS(hotenkts varchar(50))
 	Begin
-		select ten_ctr 
+		select ten_ctr, tk.thu_lao
         from cgtrinh c inner join thietke tk
         on c.stt_ctr=tk.stt_ctr
         where tk.hoten_kts=hotenkts;
 	End //
 DELIMITER ;
--- call getTenCongTrinhTuKTS('le thanh tung');
+-- call getCongTrinhTuKTS('le thanh tung');
 
 
-DELIMITER // -- da sua
+DELIMITER //
 create procedure getKTSTuCTrinh(sttctr int)
 	Begin
 		select hoten_kts, thu_lao from thietke
         where stt_ctr = sttctr;
 	End //
 DELIMITER ;
-call getKTSTuCTrinh(1);
+-- call getKTSTuCTrinh(1);
 
 
 DELIMITER //

@@ -3,7 +3,6 @@ from tkinter import ttk
 from tkinter import messagebox
 
 from mysqlConnection import ConnectionToMySQl
-from checkList import *
 from multipleForm import MultipleFormsFrame
 from model import *
 
@@ -18,6 +17,8 @@ LABEL_COLOR = 'Blue'
 
 
 class Form():
+
+	# special function with ability to change to another view
 	class funcButton():
 		def __init__(self, canvas, text, root, fModel, tModel, form=None, m2m=False, coordinate=(0, 0, 0, 0)):
 			self.canvas = canvas
@@ -33,7 +34,7 @@ class Form():
 			self.font = LABEL_FONT
 			self.create()
 
-
+		# create method
 		def create(self):
 			summit = tk.Button(	self.canvas, 
 								text 	=	self.text, 
@@ -44,7 +45,9 @@ class Form():
 			x, y, width, height = self.coordinate
 			summit.place(relx=x, rely=y, relwidth=width, relheight=height)
 
+		# New view
 		def addNew(self):
+			# change to form view
 			if not self.m2m:
 				values = self.form.getValues()
 				self.form.contentFrame.pack_forget()
@@ -52,9 +55,11 @@ class Form():
 				form.createGUI()
 			else:
 				msg = messagebox.askokcancel(
-					f'Dữ liệu về sẽ được lưu trước khi thật hiện cập nhật! Tiếp tục?'
+					'Tiếp tục?',
+					'Dữ liệu sẽ được lưu trước khi cập nhật!'
 					)
 
+				# change to multipleForm view
 				if msg:
 					self.form.submit(True)
 
@@ -118,6 +123,7 @@ class Form():
 			dropdown.place(relx=0.6, rely=lbRely + 0.1, relwidth=0.2, relheight=0.07)
 			self.fieldInputs.setdefault(field, fieldVar)
 
+			# change view button
 			btn = self.funcButton(
 				self.contentFrame, 
 				'Thêm ' + field,
@@ -129,13 +135,16 @@ class Form():
 			)
 
 			lbRely += 0.3
+			conn.closeConnection()
 		
+		# many to many field handle
 		m2mFields = self.tableModel.formsField().get("manyToMany")
 		if m2mFields is not None:
-			self.m2mText = 'Thêm '
+			self.m2mText = 'Cập nhật '
 			for field in m2mFields:
-				self.m2mText += field.tableName + ' '
+				self.m2mText += field.tableName + '  '
 
+			# change to many to many form
 			btn = self.funcButton(
 				self.contentFrame, 
 				self.m2mText,
@@ -162,6 +171,7 @@ class Form():
 
 		self.preFill()
 
+	# get all input values
 	def getValues(self):
 		values = {}
 		for field in self.fieldInputs.keys():
@@ -177,12 +187,14 @@ class Form():
 
 		return values
 
+	# function when hit the submit button
+	# save data to databse ig the input is valid
 	def submit(self, m2m=False):
 		values = self.getValues()
 
 		try:
 			self.obj = self.tableModel.saveToDatabase(values, self.edit)
-			messagebox.showinfo('Succesful!!', 'Your Data has been saved!!')
+			messagebox.showinfo('Thành công!', 'Dữ liệu của bạn đã được lưu!')
 
 			if m2m:
 				if type(self.obj) is Congtrinh:
@@ -200,6 +212,7 @@ class Form():
 		except Exception as e:
 			messagebox.showerror('Error!!!', str(e))
 
+	# use when edit data or to preserve data when toggel betwween view
 	# prefill all the forms for edit data
 	def preFill(self):
 		if len(self.values) != 0:

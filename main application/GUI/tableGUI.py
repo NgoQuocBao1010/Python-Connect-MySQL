@@ -1,17 +1,15 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
-from PIL import ImageTk, Image
-# import  PIL.Image
 
 from mysqlConnection import ConnectionToMySQl
 from formsGui import Form
 from detailGUI import Details
-from model import *
 
 LABEL_FONT = ("Sitka Banner", 13)
 TITLE_FONT = ("Comic Sans MS", 22, "bold")
 
+# Show mysql table in tkinter with functionality such as add, delete, edit and search 
 class TableGUI():
 	def __init__(self, window, model, app=None):
 		style = ttk.Style()
@@ -117,7 +115,10 @@ class TableGUI():
 
 		for data in self.rows:
 			self.trv.insert('', 'end', values=data)
+		
+		mysqlConn.closeConnection()
 
+	# create graphic user interface
 	def createGUI(self):
 		self.tableFrame.place(relx=0, rely=0, relwidth=0.75, relheight=0.7)
 		self.searchFrame.place(relx=0.75, rely=0, relwidth=0.25, relheight=0.7)
@@ -146,6 +147,7 @@ class TableGUI():
 
 		self.bindings()
 
+	# set props for columns
 	def configColumns(self, colData={}):
 		for col in colData.keys():
 			defaultWidth = self.trv.column(1)['width']
@@ -159,6 +161,7 @@ class TableGUI():
 
 			self.trv.column(col, width=width, anchor=anchor)
 
+	# search function
 	def search(self):
 		searchInput = self.searchInput.get()
 		condition = "" if searchInput == "" else f" where {self.searchTopic.get()} like '%{searchInput}%'"
@@ -168,10 +171,12 @@ class TableGUI():
 		statement = self.defaultStatement + condition + orderCondition
 		self.updateData(statement)
 
+	# add data to mysql
 	def addData(self):
 		form = Form(self.window, self.model, self.app)
 		form.createGUI()
 
+	# edit data
 	def editData(self):
 		selected = self.trv.focus()
 		if len(selected) == 0:
@@ -184,6 +189,7 @@ class TableGUI():
 		form = Form(self.window, self.model, app=self.app, edit=True, values=obj)
 		form.createGUI()
 
+	# delete data
 	def deleteData(self):
 		selected = self.trv.focus()
 		if len(selected) == 0:
@@ -203,10 +209,12 @@ class TableGUI():
 			if self.app is not None:
 				self.app.changeTableView(self.model)
 
-
+	# bindings event
 	def bindings(self):
 		self.trv.bind("<Double-1>", self.toDetail)
 
+	# double right click functions
+	# show details of an selected item
 	def toDetail(self, event):
 		selected = self.trv.focus()
 		if len(selected) == 0:
@@ -218,56 +226,3 @@ class TableGUI():
 		print(obj)
 		detail = Details(self.window, self.model, obj)
 		detail.createGui()
-
-
-
-
-
-
-
-# root = tk.Tk()
-# root.title('My Application')
-# root.geometry('1200x500')
-
-# table = TableGUI(window=root, model=Ktrucsu, tableName='Bang Kien Truc Su')
-# table.createGUI()
-
-# colData = {
-# 	1 : {
-# 		'width': 80,
-# 		'anchor': 'c'
-# 	},
-# 	2 : {
-# 		'width': 150,
-# 		'anchor': 'c'
-# 	},
-# 	3 : {
-# 		'width': 150,
-# 		'anchor': 'c'
-# 	},
-# 	4 : {
-# 		'width': 150,
-# 		'anchor': 'c'
-# 	},
-# 	5 : {
-# 		'width': 150,
-# 		'anchor': 'c'
-# 	},
-# 	6 : {
-# 		'width': 150,
-# 		'anchor': 'c'
-# 	},
-# 	7 : {
-# 		'width': 120,
-# 		'anchor': 'c'
-# 	},
-# 	8 : {
-# 		'width': 100,
-# 		'anchor': 'c'
-# 	},
-# }
-# table.configColumns(colData)
-
-
-
-# root.mainloop()

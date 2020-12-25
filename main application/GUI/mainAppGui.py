@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 
-from mysqlConnection import ConnectionToMySQl
 from tableGUI import TableGUI
 import model
 

@@ -1,18 +1,14 @@
 import tkinter as tk
 from tkinter import ttk
 
-from mysqlConnection import ConnectionToMySQl
 from table import TableTkinter
 from model import *
-
-HEIGHT = 500
-WIDTH  = 1200
 
 fontHeadings = ('Felix Titling', 30,'bold')
 fontFields = ('Courier', 12,'bold')
 fontData = ('Courier', 13, 'bold')
 
-
+# gui to show all details of an object in database
 class Details():
 	def __init__(self, window, tableModel, values={}):
 		self.window = window
@@ -20,12 +16,14 @@ class Details():
 		self.values = values
 		self.contentFrame = tk.Frame(self.window)
 	
+	# create gui
 	def createGui(self):
 		self.contentFrame.pack(fill='both', expand='yes')
 		
-		typeOfDetail = self.tableModel.tableName
+		typeOfDetail = self.tableModel.tableName.lower()
 		name = self.values.get(self.tableModel.sqlSyntax.get(self.tableModel.imptField))
 		title = typeOfDetail + ' ' + name.upper()
+
 		# Main Label
 		nameLb = tk.Label(
 			self.contentFrame,
@@ -61,23 +59,31 @@ class Details():
 			startPos = 0.2
 			for field in self.tableModel.formsField().get('manyToMany'):
 				tableCN = TableTkinter(self.contentFrame, 0.6, startPos, 0.3, 0.2)
-				colData = {
-					field.tableName: (field.tableName, 100, 'w'),
-				}
-				tableCN.setColumns(colData)
 
 				if field is Congnhan:
 					obj = Congtrinh(*self.values.values())
 					dataField = obj.getCongNhan()
+					headings = obj.manyToManyField('congnhan')
 				
 				if field is Ktrucsu:
 					obj = Congtrinh(*self.values.values())
 					dataField = obj.getKienTrucSu()
+					headings = obj.manyToManyField('ktrucsu')
 				
 				if field is Congtrinh:
 					obj = self.tableModel(*self.values.values())
 					dataField = obj.getCongTrinh()
+					headings = obj.manyToManyField()
 				
+				# colData = {
+				# 	field.tableName: (field.tableName, 100, 'w'),
+				# }
+				colData = {}
+
+				for heading in headings:
+					colData.setdefault(heading, (heading, 100, 'w'))
+				
+				tableCN.setColumns(colData)
 				tableCN.insertData(dataField)
 
 				startPos += 0.3
@@ -88,14 +94,3 @@ class Details():
 	
 	def back(self):
 		self.contentFrame.destroy()
-
-
-
-
-
-
-# root = tk.Tk()
-# root.geometry('1200x600')
-# d = Details(root, Congtrinh)
-# f.createGUI()
-# root.mainloop()

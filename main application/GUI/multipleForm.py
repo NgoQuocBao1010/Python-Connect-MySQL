@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
 from model import *
-from collections import OrderedDict
+# from collections import OrderedDict
 
 from mysqlConnection import ConnectionToMySQl
 
@@ -10,7 +10,7 @@ SUB_TITLE = ("Sitka Banner", 13)
 TITLE_FONT = ("Comic Sans MS", 15, "bold")
 LABLE_FONT = ("Sitka Banner", 13, "bold")
 
-
+# forms
 class MultipleForms():
 	def __init__(self, window, keyModel, coordinate=(0, 0), fields=[], values={}):
 		self.window = window
@@ -61,7 +61,7 @@ class MultipleForms():
 		)
 		self.checkBox.place(relx=0.9, rely=0.2, relwidth=0.1, relheight=0.5)
 		
-	
+	# get options for dropdown
 	def getKeyOptions(self):
 		defaultStatement = f'select {self.keyModel.imptField} from {self.keyModel.table}'
 		conn = ConnectionToMySQl()
@@ -70,8 +70,9 @@ class MultipleForms():
 		self.options = []
 		for name in rs:
 			self.options.append(*name)
+		conn.closeConnection()
 	
-	
+	# get all input values
 	def getValue(self):
 		values = []
 		for inputVar in self.inputs:
@@ -79,10 +80,9 @@ class MultipleForms():
 			values.append(value)
 
 		return values, self.variable.get()
-	
-		
 
 
+# frame to contains all forms
 class MultipleFormsFrame():
 	def __init__(self, window, keyObject, savedTable, containInfo=None):
 		self.window = window
@@ -97,6 +97,7 @@ class MultipleFormsFrame():
 		self.getData()
 		self.contentFrame.pack(fill='both', expand='yes') 
 
+		# title label
 		firstText = 'Thêm ' + self.keyModel.tableName + ' cho ' + self.keyObject.tableName + ' '
 		Label(
 			self.contentFrame,
@@ -155,6 +156,7 @@ class MultipleFormsFrame():
 
 			self.marginy += 0.18
 	
+	# get necessary data to create forms
 	def getData(self):
 		if self.tableModel is Congtrinh:
 			self.keyModel = Congnhan if self.savedTable is Thamgia else Ktrucsu
@@ -179,21 +181,27 @@ class MultipleFormsFrame():
 		mf.createGui()
 		self.forms.append(mf)
 		self.marginy += 0.15
-
+	
+	# refresh app to view info
 	def refreshApp(self):
 		self.app, self.tableModel = self.containInfo
 		self.app.changeTableView(self.tableModel)
 	
+	# get all input values
 	def getValues(self):
 		values = {}
 		aValues = [] # contains submit values
 		for form in self.forms:
 			value, checked = form.getValue()
 			if checked:
+				for v in value:
+					if len(v) == 0:
+						messagebox.showerror('Dữ liệu không đúng', 'Điền thiếu thông tin!!')
+						return
 				if value[0] not in aValues:
 					aValues.append(value[0])
 				else:
-					messagebox.showerror('Invalid Input', 'Cannot choose the same value twice')
+					messagebox.showerror('Dữ liệu không đúng', 'Các trường bị trùng lặp!!!')
 					return
 
 				values.setdefault(value[0],tuple(value))
@@ -241,10 +249,9 @@ class MultipleFormsFrame():
 						args = [str(self.keyObject), value]
 					print('Delete', value)
 					self.savedTable.deleteFromDB(args)
-			messagebox.showinfo('', 'Your data has been updated!')
+			messagebox.showinfo('Thành công!', 'Dữ liệu của bạn đã được lưu!')
 		except Exception as e:
-			messagebox.showerror('Error!!!', str(e))
-		# print(self.savedTable)
+			messagebox.showerror('Đã xảy ra lỗi!!!', str(e))
 		self.contentFrame.destroy()
 		
 		if type(self.keyObject) is Congtrinh:
@@ -253,43 +260,3 @@ class MultipleFormsFrame():
 				mft.createGui()
 			else:
 				self.refreshApp()
-		
-
-
-		
-
-		# print(values)
-
-	
-obj = {
-	'STT': 10, 
-	'Tên Công Trình': 'cong trinh moi', 
-	'Địa Chỉ': 'Hung Loi', 
-	'Tỉnh Thành': 'sai gon', 
-	'Kinh Phí': 100, 
-	'Tên Chủ': 'NCHM', 
-	'Tên Thầu': 'le van son', 
-	'Ngày Bắt Đầu': '2020-10-10'
-	}
-objCt = Congtrinh(*obj.values())
-
-kts = {
-	'Họ và tên': 'Phu Nguyen', 
-	'Năm sinh': 2000, 
-	'Phái': 1, 
-	'Nơi tốt nghiệp': 'Can Tho', 
-	'Địa chỉ': 'Can Tho'
-	}
-objKts = Ktrucsu(*kts.values())
-
-print(objCt.getKienTrucSu())
-# root = Tk()
-# root.geometry('600x600')
-# # mft = MultipleFormsFrame(root, objCt, Thietke)
-# mft = MultipleFormsFrame(root, objKts, Thietke)
-# mft.createGui()
-# root.mainloop()
-
-
-
-	

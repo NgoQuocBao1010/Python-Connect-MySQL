@@ -1,6 +1,8 @@
 from mysqlConnection import ConnectionToMySQl
 from datetime import datetime
 
+# ---------------------- Each model preresent a table in mysql data batabase ----------------------
+
 class Congtrinh:
 	table = 'cgtrinh'
 	tableName = 'Công Trình'
@@ -67,6 +69,13 @@ class Congtrinh:
 		}
 
 	@classmethod
+	def manyToManyField(cls, tableName):
+		return {
+			'congnhan': ['Tên Công Nhân', 'Ngày Tham Gia', 'Số Ngày'],
+			'ktrucsu': ['Tên KTS', 'Thù Lao']
+		}.get(tableName)
+	
+	@classmethod
 	def saveToDatabase(cls, values, edit=False):
 		conn 		= ConnectionToMySQl()
 		idCtr 		= max(conn.getQueryset('select stt_ctr from cgtrinh'))[0] + 1 if not edit else values.get('STT')
@@ -83,6 +92,7 @@ class Congtrinh:
 			ngaybd = datetime.strptime(ngaybd, '%Y-%m-%d').date()
 
 		except Exception as e:
+			print(str(e))
 			raise Exception('Wrong Format or Data Type in Field kinhphi or ngaybatdau')
 
 		
@@ -95,6 +105,7 @@ class Congtrinh:
 			conn.cursor.callproc('insertIntoCgtrinh', args)
 
 		conn.connection.commit()
+		conn.closeConnection()
 
 		return obj
 
@@ -112,6 +123,8 @@ class Congtrinh:
 					conn.connection.commit()
 				except Exception as e:
 					print(str(e))
+				finally:
+					conn.closeConnection()
 
 	def __init__(self, stt, tenctr, diachi, tinhthanh, kinhphi, tenchu, tenthau, ngaybatdau):
 		self.stt = stt
@@ -129,29 +142,28 @@ class Congtrinh:
 	def getKienTrucSu(self):
 		conn = ConnectionToMySQl()
 		args = (self.stt, )
-		# args = ('nguyen thi suu', )
+		
 		conn.cursor.callproc('getKTSTuCTrinh', args)
 		rs = conn.cursor.stored_results()
 
-		# dict(zip(self.cursor.column_names, self.cursor.fetchone()))
 		for row in rs:
 			data = row.fetchall()
-			# print(row.column_names)
 
+		conn.closeConnection()
 		return data
 
 	def getCongNhan(self):
 		conn = ConnectionToMySQl()
 		args = (self.stt, )
-		# args = ('nguyen thi suu', )
+
 		conn.cursor.callproc('getCongNhanTuCTrinh', args)
 		rs = conn.cursor.stored_results()
 
 		for row in rs:
 			data = row.fetchall()
 
+		conn.closeConnection()
 		return data
-
 
 	def __str__(self):
 		return self.tenctr
@@ -198,9 +210,9 @@ class Chuthau:
 
 		else:
 			conn.cursor.callproc('insertIntoChuthau', args)
+
 		conn.connection.commit()
-
-
+		conn.closeConnection()
 		return True
 
 	@classmethod
@@ -217,6 +229,8 @@ class Chuthau:
 					conn.connection.commit()
 				except Exception as e:
 					print(str(e))
+				finally:
+					conn.closeConnection()
 
 	def __init__(self, tenthau, tel, diachi):
 		self.tenthau = tenthau
@@ -261,6 +275,7 @@ class Chunhan:
 			conn.cursor.callproc('insertIntoChunhan', args)
 
 		conn.connection.commit()
+		conn.closeConnection()
 
 		return True
 
@@ -278,6 +293,8 @@ class Chunhan:
 					conn.connection.commit()
 				except Exception as e:
 					print(str(e))
+				finally:
+					conn.closeConnection()
 	
 	def __init__(self, tenchu, diachi):
 		self.tenchu = tenchu
@@ -303,7 +320,11 @@ class Congnhan:
 			'forgeinKey': {
 			},
 			'manyToMany': [Congtrinh],
-	}
+		}
+
+	@classmethod
+	def manyToManyField(cls):
+		return ['Tên Công Trình', 'Ngày Tham Gia', 'Số Ngày']
 
 	@classmethod
 	def saveToDatabase(cls, values, edit=False):
@@ -331,6 +352,7 @@ class Congnhan:
 			conn.cursor.callproc('insertIntoCongnhan', args)
 
 		conn.connection.commit()
+		conn.closeConnection()
 
 		return obj
 
@@ -348,6 +370,8 @@ class Congnhan:
 					conn.connection.commit()
 				except Exception as e:
 					print(str(e))
+				finally:
+					conn.closeConnection()
 
 	def __init__(self, hotencn, namsinhcn, namvaonghe, chuyenmon):
 		self.hotencn = hotencn
@@ -358,13 +382,13 @@ class Congnhan:
 	def getCongTrinh(self):
 		conn = ConnectionToMySQl()
 		args = (self.hotencn, )
-		# args = ('nguyen thi suu', )
+
 		conn.cursor.callproc('getTenCongTrinhTuCongNhan', args)
 		rs = conn.cursor.stored_results()
 
 		for row in rs:
 			data = row.fetchall()
-
+		conn.closeConnection()
 		return data
 	
 	def getPk(self):
@@ -394,7 +418,12 @@ class Ktrucsu:
 			'forgeinKey': {
 			},
 			'manyToMany': [Congtrinh],
-	}
+		}
+
+	@classmethod
+	def manyToManyField(cls):
+		return ['Tên Công Trình', 'Thù Lao']
+		
 
 	@classmethod
 	def saveToDatabase(cls, values, edit=False):
@@ -421,6 +450,7 @@ class Ktrucsu:
 		else:
 			conn.cursor.callproc('insertIntoKtrucsu', args)
 		conn.connection.commit()
+		conn.closeConnection()
 
 		return obj
 
@@ -438,8 +468,8 @@ class Ktrucsu:
 					conn.connection.commit()
 				except Exception as e:
 					print(str(e))
-
-		
+				finally:
+					conn.closeConnection()
 
 	def __init__(self, hotenkts, namsinhkts, phai, noitn, diachi_ll_kts):
 		self.hotenkts = hotenkts
@@ -447,18 +477,18 @@ class Ktrucsu:
 		self.phai = phai
 		self.noitn = noitn
 		self.diachi_ll_kts = diachi_ll_kts
-	
 
 	def getCongTrinh(self):
 		conn = ConnectionToMySQl()
 		args = (self.hotenkts, )
-		# args = ('nguyen thi suu', )
+
 		conn.cursor.callproc('getCongTrinhTuKTS', args)
 		rs = conn.cursor.stored_results()
 
 		for row in rs:
 			data = row.fetchall()
 
+		conn.closeConnection()
 		return data
 
 	def getPk(self):
@@ -509,6 +539,7 @@ class Thamgia:
 			conn.cursor.callproc('themCongNhanLamViec', args)
 
 		conn.connection.commit()
+		conn.closeConnection()
 
 	@classmethod
 	def deleteFromDB(cls, values):
@@ -521,6 +552,7 @@ class Thamgia:
 		args = tuple(values)
 		conn.cursor.callproc('xoaCongNhanLamViec', args)
 		conn.connection.commit()
+		conn.closeConnection()
 	
 
 	def __init__(self, hotenCn, sttctr, ngayTG, soNgay):
@@ -528,6 +560,7 @@ class Thamgia:
 		self.stt_ctr = sttctr
 		self.ngay_tgia = ngayTG
 		self.so_ngay = soNgay
+
 
 class Thietke:
 	table =  'thietke'
@@ -568,6 +601,7 @@ class Thietke:
 			conn.cursor.callproc('themKTSLamViec', args)
 
 		conn.connection.commit()
+		conn.closeConnection()
 
 	@classmethod
 	def deleteFromDB(cls, values):
@@ -580,11 +614,9 @@ class Thietke:
 		args = tuple(values)
 		conn.cursor.callproc('xoaKTSLamViec', args)
 		conn.connection.commit()
+		conn.closeConnection()
 	
 	def __init__(self, tenkts, sttctr, thu_lao):
 		self.tenkts = tenkts
 		self.stt_ctr = sttctr
 		self.thulao = thu_lao
-
-# Congtrinh.createAnObj()
-# print(Congtrinh.createAnObj())
