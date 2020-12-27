@@ -101,7 +101,7 @@ insert into  ktrucsu values ('Lê Kim Dung', 1952, 'Nữ', 'Hà Nội', '18/5 Ph
 insert into  ktrucsu values ('Nguyễn Anh Thư', 1970, 'Nữ', 'New York USA', 'Khu 1 ĐH Cần Thơ');
 insert into  ktrucsu values ('Nguyễn Song Đỗ Quyên', 1970, 'Nữ', 'TP Hồ Chí Minh', '73 Trần Hưng Đạo TP Hồ Chí Minh');
 insert into  ktrucsu values ('Trương Minh Thái', 1950, 'Nam', 'Paris France', '12/2/5 Trần Phú TP Hà Nội');
-insert into  ktrucsu values ('Trương Minh Thái', 1950, 'Nam', 'Paris France', '12/2/5 Trần Phú TP Hà Nội');
+
 
 insert into cgtrinh values 
 (1, 'Khách Sạn Quốc Tế', '5 Nguyễn An Ninh', 'Cần Thơ' , 450, 'Sở Thương Mại Du Lịch', 'Công Ty Xăng Dầu Số 6', '1994-12-13'); 

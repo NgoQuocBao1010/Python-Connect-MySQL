@@ -116,9 +116,10 @@ class MultipleFormsFrame():
 		# Add button
 		Button(
 			self.contentFrame,
-			text='Add',
+			text='Thêm',
 			bg='#3F66DC',
-			fg='red',
+			fg='white',
+			font=LABLE_FONT,
 			command=self.addMoreForm
 		).place(relx=0.9, rely=0.01, relwidth=0.09, relheight=0.07)
 
@@ -128,6 +129,7 @@ class MultipleFormsFrame():
 			text='Save',
 			bg='#3F66DC',
 			fg='white',
+			font=LABLE_FONT,
 			command=self.getValues
 		).place(relx=0.9, rely=0.9, relwidth=0.09, relheight=0.07)
 
@@ -258,4 +260,7 @@ class MultipleFormsFrame():
 			if self.savedTable is Thietke:
 				mft = MultipleFormsFrame(self.window, self.keyObject, Thamgia, containInfo=self.containInfo)
 				mft.createGui()
-		self.refreshApp()
+			else:
+				self.refreshApp()
+		else:
+			self.refreshApp()

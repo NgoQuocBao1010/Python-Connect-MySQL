@@ -30,7 +30,7 @@ create procedure layCgtrinhHon1ty()
         where cgtrinhHon1ty(kinh_phi)=True;
     End//
 DELIMITER ;
-call layCgtrinhHon1ty();
+-- call layCgtrinhHon1ty();
 
 
 
