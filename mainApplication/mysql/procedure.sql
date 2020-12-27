@@ -94,6 +94,8 @@ create procedure updateChunhan(tenchucu varchar(50),tenchumoi varchar(50), dchi 
 	End //
 DELIMITER ;
 
+
+
 DELIMITER //
 create procedure xoaChuNhan(tenchu varchar(50))
 	Begin
