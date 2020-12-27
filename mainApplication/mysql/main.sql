@@ -87,19 +87,20 @@ insert into  chuthau values ('Phòng Dịch Vụ Sở Xây Dựng', '206481', '2
 insert into  chuthau values ('Lê Văn Sơn', '028374', '12 Trần Nhân Tông');
 insert into  chuthau values ('Trần Khải Hoàn', '658432', '20 Nguyễn Thái Học');
 
-insert into  congnhan values ('Nguyễn Thị Sửu', 45, 60, 'hồ');
-insert into  congnhan values ('Vĩ Chí A',66, 87, 'hàn');
-insert into  congnhan values ('Lê Mạnh Quốc', 56, 71, 'mộc');
-insert into  congnhan values ('Võ Văn Chín', 40 , 52, 'sơn');
-insert into  congnhan values ('Lê Quyết Thắng', 54, 74, 'sơn');
-insert into  congnhan values ('Nguyễn Hồng Vân', 50, 70, 'điện');
-insert into  congnhan values ('Đặng Văn Sơn', 48, 65, 'điện');
+insert into  congnhan values ('Nguyễn Thị Sửu', 1945, 1960, 'hồ');
+insert into  congnhan values ('Vĩ Chí A',1966, 1987, 'hàn');
+insert into  congnhan values ('Lê Mạnh Quốc', 1956, 1971, 'mộc');
+insert into  congnhan values ('Võ Văn Chín', 1940 , 1952, 'sơn');
+insert into  congnhan values ('Lê Quyết Thắng', 1954, 1974, 'sơn');
+insert into  congnhan values ('Nguyễn Hồng Vân', 1950, 1970, 'điện');
+insert into  congnhan values ('Đặng Văn Sơn', 1948, 1965, 'điện');
 
 
 insert into  ktrucsu values ('Lê Thanh Tùng', 1956, 'Nam', 'TP Hồ Chí Minh', '25 đường 3/2 TP Biên Hòa');
 insert into  ktrucsu values ('Lê Kim Dung', 1952, 'Nữ', 'Hà Nội', '18/5 Phan Văn Trị TP Cần Thơ');
 insert into  ktrucsu values ('Nguyễn Anh Thư', 1970, 'Nữ', 'New York USA', 'Khu 1 ĐH Cần Thơ');
 insert into  ktrucsu values ('Nguyễn Song Đỗ Quyên', 1970, 'Nữ', 'TP Hồ Chí Minh', '73 Trần Hưng Đạo TP Hồ Chí Minh');
+insert into  ktrucsu values ('Trương Minh Thái', 1950, 'Nam', 'Paris France', '12/2/5 Trần Phú TP Hà Nội');
 insert into  ktrucsu values ('Trương Minh Thái', 1950, 'Nam', 'Paris France', '12/2/5 Trần Phú TP Hà Nội');
 
 insert into cgtrinh values 
