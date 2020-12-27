@@ -258,5 +258,4 @@ class MultipleFormsFrame():
 			if self.savedTable is Thietke:
 				mft = MultipleFormsFrame(self.window, self.keyObject, Thamgia, containInfo=self.containInfo)
 				mft.createGui()
-			else:
-				self.refreshApp()
+		self.refreshApp()

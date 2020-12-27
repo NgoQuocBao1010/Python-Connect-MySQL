@@ -365,28 +365,27 @@ class Congnhan:
 		conn = ConnectionToMySQl()
 		args = ()
 		try:
-			conn.cursor.callproc('layCgtrinhHon1ty', args)
+			conn.cursor.callproc('congNhanLamViecNhieuCongTrinhNhat', args)
 			rs = conn.cursor.stored_results()
 			for s in rs:
 				data = s.fetchall()
 			
-			result = 'Các công trình có kinh phí hơn 1 tỷ đồng: '
+			result = 'Công nhân làm việc nhiều công trình nhất: '
 			for row in data:
 				result += row[0] + ', '
 			
 			result = result[:-2]
 			info.append(result)
 
-			conn.cursor.callproc('tongKinhPhiCacCongTrinh', args)
+			conn.cursor.callproc('congNhanLamViecNhieuNgayNhat', args)
 			rs = conn.cursor.stored_results()
 			for s in rs:
 				data = s.fetchall()
 			
-			result = 'Tổng kinh phí của các công trình: '
+			result = 'Công nhân làm việc nhiều ngày nhất: '
 			for row in data:
 				result += str(row[0]) + ', '
 			result = result[:-2]
-			result += ' triệu đồng'
 			info.append(result)
 			return info
 		except Exception as e:
@@ -491,6 +490,41 @@ class Ktrucsu:
 			},
 			'manyToMany': [Congtrinh],
 		}
+	
+	@classmethod
+	def information(self):
+		info = []
+		conn = ConnectionToMySQl()
+		args = ()
+		try:
+			conn.cursor.callproc('ktsLamViecNhieuCtrinhNhat', args)
+			rs = conn.cursor.stored_results()
+			for s in rs:
+				data = s.fetchall()
+			
+			result = 'Kiến trúc sư làm việc nhiều công trình nhất: '
+			for row in data:
+				result += row[0] + ', '
+			
+			result = result[:-2]
+			info.append(result)
+
+			conn.cursor.callproc('ktsCoThulaoNhieuNhat', args)
+			rs = conn.cursor.stored_results()
+			for s in rs:
+				data = s.fetchall()
+			
+			result = 'Kiến trúc sư có thù lao nhiều nhất: '
+			for row in data:
+				result += str(row[0]) + ', '
+			result = result[:-2]
+			info.append(result)
+			return info
+		except Exception as e:
+			print(str(e))
+		finally:
+			conn.closeConnection()
+
 
 	@classmethod
 	def manyToManyField(cls):
@@ -500,14 +534,13 @@ class Ktrucsu:
 	@classmethod
 	def saveToDatabase(cls, values, edit=False):
 		args = ()
-
 		tenkts 		= values.get('Họ và tên')
 		namsinhkts  = values.get('Năm sinh')
 		phai		= values.get('Phái')
 		noitn   	= values.get('Nơi tốt nghiệp')
 		dchi 		= values.get('Địa chỉ')
 
-		if not phai.isdigit():
+		if not namsinhkts.isdigit():
 			raise Exception('Wrong Format or Data Type in Field Năm sinh')
 		
 		conn = ConnectionToMySQl()

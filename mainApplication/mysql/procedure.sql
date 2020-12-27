@@ -142,7 +142,7 @@ DELIMITER ;
 
 -- Bang KTS
 DELIMITER //
-create procedure insertIntoKtrucsu(tenKts varchar(50), nskts int, phai int, noitn varchar(50), dchi varchar(50))
+create procedure insertIntoKtrucsu(tenKts varchar(50), nskts int, phai varchar(10), noitn varchar(50), dchi varchar(50))
 	Begin
 		insert into ktrucsu values (tenkts, nskts, phai, noitn, dchi); 
 	End //
@@ -150,7 +150,7 @@ DELIMITER ;
 -- call insertIntoKtrucsu('NCHM', 2000, 1, 'new york', 'cau hung loi');
 
 DELIMITER //
-create procedure updateKtrucsu(tenKtscu varchar(50),tenKtsmoi varchar(50), nskts int, phai int, noitn varchar(50), dchi varchar(50))
+create procedure updateKtrucsu(tenKtscu varchar(50),tenKtsmoi varchar(50), nskts int, phai varchar(10), noitn varchar(50), dchi varchar(50))
 	Begin
 		set FOREIGN_KEY_CHECKS = 0;
 		update ktrucsu set HOTEN_KTS = tenKtsmoi, NAMS_KTS = nskts, PHAI = phai, NOI_TN = noitn, DCHI_LL_KTS = dchi where hoten_kts = tenKtscu; 
@@ -225,6 +225,32 @@ create procedure xoaCongNhanLamViec(hotencn varchar(50), sttCtr int)
 DELIMITER ;
 -- call xoaCongNhanLamViec('nguyen thi suu', 5);
 
+DELIMITER //
+create procedure congNhanLamViecNhieuCongTrinhNhat()
+	Begin
+		select hoten_cn from thamgia
+		group by hoten_cn having count(stt_ctr) = 
+			(select max(tg) from 
+				(select hoten_cn, count(stt_ctr) tg
+				from thamgia
+				group by hoten_cn) as T);
+	End //
+DELIMITER ;
+-- call congNhanLamViecNhieuNhat();
+
+DELIMITER //
+create procedure congNhanLamViecNhieuNgayNhat()
+	Begin
+		select hoten_cn, sum(so_ngay) from thamgia
+		group by hoten_cn having sum(so_ngay) = 
+			(select max(tg) from 
+				(select hoten_cn, sum(so_ngay) tg
+				from thamgia
+				group by hoten_cn) as T);
+	End //
+DELIMITER ;
+-- call congNhanLamViecNhieuNhat();
+
 
 
 
@@ -297,7 +323,31 @@ DELIMITER ;
 
 
 
+DELIMITER //
+create procedure ktsLamViecNhieuCtrinhNhat()
+	Begin
+		select hoten_kts from thietke
+		group by hoten_kts having count(stt_ctr) = 
+			(select max(tg) from 
+				(select hoten_kts, count(stt_ctr) tg
+				from thietke
+				group by hoten_kts) as T);
+	End //
+DELIMITER ;
 
 
 
+
+
+DELIMITER //
+create procedure ktsCoThulaoNhieuNhat()
+	Begin
+		select hoten_kts from thietke
+		group by hoten_kts having sum(thu_lao) = 
+			(select max(tg) from 
+				(select hoten_kts, sum(thu_lao) tg
+				from thietke
+				group by hoten_kts) as T);
+	End //
+DELIMITER ;
 
